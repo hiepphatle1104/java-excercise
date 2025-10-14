@@ -1,0 +1,6 @@
+[submodule "EVBatteryReuse"]
+	path = EVBatteryReuse
+	url = git@github.com:DanhKhongUs/EVBatteryReuse.git
+[submodule "app-ui"]
+	path = app-ui
+	url = git@github.com:DanhKhongUs/EVBatteryReuse.git
