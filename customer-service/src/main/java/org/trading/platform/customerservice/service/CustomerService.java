@@ -3,6 +3,7 @@ package org.trading.platform.customerservice.service;
 import org.springframework.stereotype.Service;
 import org.trading.platform.customerservice.dto.CustomerRequestDTO;
 import org.trading.platform.customerservice.dto.CustomerResponseDTO;
+import org.trading.platform.customerservice.exception.EmailAlreadyExistException;
 import org.trading.platform.customerservice.helper.CustomerMapper;
 import org.trading.platform.customerservice.model.Customer;
 import org.trading.platform.customerservice.repository.CustomerRepository;
@@ -24,6 +25,9 @@ public class CustomerService {
     }
 
     public CustomerResponseDTO createCustomer(CustomerRequestDTO customerRequestDTO) {
+        if (customerRepository.existsByEmail(customerRequestDTO.getEmail()))
+            throw new EmailAlreadyExistException("Email already exist");
+
         Customer customer = customerRepository.save(CustomerMapper.toModel(customerRequestDTO));
 
         return CustomerMapper.toDTO(customer);
