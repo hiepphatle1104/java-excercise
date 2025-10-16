@@ -8,7 +8,9 @@ import org.trading.platform.customerservice.dto.CustomerResponseDTO;
 import org.trading.platform.customerservice.dto.UpdateRequestDTO;
 import org.trading.platform.customerservice.service.CustomerService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -46,5 +48,14 @@ public class CustomerController {
         CustomerResponseDTO customerResponseDTO = customerService.updateCustomer(id, updateRequestDTO);
 
         return ResponseEntity.ok().body(customerResponseDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteCustomer(@PathVariable UUID id) {
+        Map<String, String> response = new HashMap<>();
+        customerService.deleteCustomer(id);
+
+        response.put("message", "deleted");
+        return ResponseEntity.ok().body(response);
     }
 }

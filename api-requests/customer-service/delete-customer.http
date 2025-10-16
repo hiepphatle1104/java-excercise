@@ -1,0 +1,5 @@
+### Delete customer
+@id = 3cf82d47-033b-4237-a69b-648d8e49bbea
+DELETE http://localhost:4000/customers/{{id}}
+
+###

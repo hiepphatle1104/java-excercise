@@ -1,5 +1,5 @@
 ### Update customer
-@id = 910c345e-e3d6-4c3a-83d3-03b3666ef86d
+@id = 3cf82d47-033b-4237-a69b-648d8e49bbea
 PUT http://localhost:4000/customers/{{id}}
 Content-Type: application/json
 
