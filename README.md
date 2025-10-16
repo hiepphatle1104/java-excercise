@@ -8,4 +8,4 @@
 - Payment Service
 - Product Service
 - Order Service
-- TEST_GITHUB
+- TEST
