@@ -26,4 +26,12 @@ public class GlobalExceptionHandler {
         errors.put("message", "Email already exist");
         return ResponseEntity.badRequest().body(errors);
     }
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleCustomerNotFoundException(CustomerNotFoundException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Customer not found");
+
+        return ResponseEntity.badRequest().body(errors);
+    }
 }

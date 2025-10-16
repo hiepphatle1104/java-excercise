@@ -1,0 +1,5 @@
+### Get customer information
+@id = 7319c29f-9808-4a8b-864a-13df29e721b3
+GET http://localhost:4000/customers/{{id}}
+
+###
