@@ -1,0 +1,14 @@
+### Update customer
+@id = 910c345e-e3d6-4c3a-83d3-03b3666ef86d
+PUT http://localhost:4000/customers/{{id}}
+Content-Type: application/json
+
+{
+  "email": "phatlee1104@gmail.com",
+  "firstName": "Hiep Phat",
+  "lastName": "Le",
+  "address": "Main street, 123",
+  "phoneNumber": "0963116549"
+}
+
+###

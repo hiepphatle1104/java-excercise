@@ -3,6 +3,7 @@ package org.trading.platform.customerservice.service;
 import org.springframework.stereotype.Service;
 import org.trading.platform.customerservice.dto.CustomerRequestDTO;
 import org.trading.platform.customerservice.dto.CustomerResponseDTO;
+import org.trading.platform.customerservice.dto.UpdateRequestDTO;
 import org.trading.platform.customerservice.exception.CustomerNotFoundException;
 import org.trading.platform.customerservice.exception.EmailAlreadyExistException;
 import org.trading.platform.customerservice.helper.CustomerMapper;
@@ -39,5 +40,22 @@ public class CustomerService {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
 
         return CustomerMapper.toDTO(customer);
+    }
+
+    public CustomerResponseDTO updateCustomer(UUID id, UpdateRequestDTO updateRequestDTO) {
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+
+        if (!customer.getEmail().equals(updateRequestDTO.getEmail()))
+            if (customerRepository.existsByEmail(updateRequestDTO.getEmail()))
+                throw new EmailAlreadyExistException("Email already exist");
+
+        customer.setAddress(updateRequestDTO.getAddress());
+        customer.setPhoneNumber(updateRequestDTO.getPhoneNumber());
+        customer.setEmail(updateRequestDTO.getEmail());
+        customer.setFirstName(updateRequestDTO.getFirstName());
+        customer.setLastName(updateRequestDTO.getLastName());
+
+        Customer updatedCustomer = customerRepository.save(customer);
+        return CustomerMapper.toDTO(updatedCustomer);
     }
 }

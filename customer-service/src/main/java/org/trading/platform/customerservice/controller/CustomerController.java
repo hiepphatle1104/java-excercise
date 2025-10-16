@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.trading.platform.customerservice.dto.CustomerRequestDTO;
 import org.trading.platform.customerservice.dto.CustomerResponseDTO;
+import org.trading.platform.customerservice.dto.UpdateRequestDTO;
 import org.trading.platform.customerservice.service.CustomerService;
 
 import java.util.List;
@@ -36,6 +37,13 @@ public class CustomerController {
     @GetMapping("/{id}")
     public ResponseEntity<CustomerResponseDTO> getCustomer(@PathVariable UUID id) {
         CustomerResponseDTO customerResponseDTO = customerService.getCustomer(id);
+
+        return ResponseEntity.ok().body(customerResponseDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> updateCustomer(@PathVariable UUID id, @Valid @RequestBody UpdateRequestDTO updateRequestDTO) {
+        CustomerResponseDTO customerResponseDTO = customerService.updateCustomer(id, updateRequestDTO);
 
         return ResponseEntity.ok().body(customerResponseDTO);
     }
