@@ -8,6 +8,7 @@ import org.trading.platform.customerservice.dto.CustomerResponseDTO;
 import org.trading.platform.customerservice.service.CustomerService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/customers")
@@ -28,6 +29,13 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<CustomerResponseDTO> createCustomer(@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {
         CustomerResponseDTO customerResponseDTO = customerService.createCustomer(customerRequestDTO);
+
+        return ResponseEntity.ok().body(customerResponseDTO);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> getCustomer(@PathVariable UUID id) {
+        CustomerResponseDTO customerResponseDTO = customerService.getCustomer(id);
 
         return ResponseEntity.ok().body(customerResponseDTO);
     }
