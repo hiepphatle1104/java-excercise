@@ -3,6 +3,7 @@ package org.trading.platform.customerservice.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -10,8 +11,12 @@ import java.util.UUID;
 public class CustomerResponseDTO {
     private UUID id;
     private String email;
+
     private String firstName;
     private String lastName;
     private String address;
     private String phoneNumber;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

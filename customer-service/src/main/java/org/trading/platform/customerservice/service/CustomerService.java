@@ -1,8 +1,9 @@
 package org.trading.platform.customerservice.service;
 
 import org.springframework.stereotype.Service;
+import org.trading.platform.customerservice.dto.CustomerRequestDTO;
 import org.trading.platform.customerservice.dto.CustomerResponseDTO;
-import org.trading.platform.customerservice.mapper.CustomerMapper;
+import org.trading.platform.customerservice.helper.CustomerMapper;
 import org.trading.platform.customerservice.model.Customer;
 import org.trading.platform.customerservice.repository.CustomerRepository;
 
@@ -20,5 +21,11 @@ public class CustomerService {
         List<Customer> customers = customerRepository.findAll();
 
         return customers.stream().map(CustomerMapper::toDTO).toList();
+    }
+
+    public CustomerResponseDTO createCustomer(CustomerRequestDTO customerRequestDTO) {
+        Customer customer = customerRepository.save(CustomerMapper.toModel(customerRequestDTO));
+
+        return CustomerMapper.toDTO(customer);
     }
 }

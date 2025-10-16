@@ -1,0 +1,10 @@
+### Create new customer
+POST http://localhost:4000/customers
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "password": "admin1234"
+}
+
+###

@@ -1,9 +1,9 @@
 package org.trading.platform.customerservice.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.trading.platform.customerservice.dto.CustomerRequestDTO;
 import org.trading.platform.customerservice.dto.CustomerResponseDTO;
 import org.trading.platform.customerservice.service.CustomerService;
 
@@ -23,5 +23,12 @@ public class CustomerController {
         List<CustomerResponseDTO> customers = customerService.getCustomers();
 
         return ResponseEntity.ok().body(customers);
+    }
+
+    @PostMapping
+    public ResponseEntity<CustomerResponseDTO> createCustomer(@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {
+        CustomerResponseDTO customerResponseDTO = customerService.createCustomer(customerRequestDTO);
+
+        return ResponseEntity.ok().body(customerResponseDTO);
     }
 }

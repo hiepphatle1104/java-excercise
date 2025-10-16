@@ -1,4 +1,4 @@
-### GET request to get all customer
+### Get all customers
 GET http://localhost:4000/customers
 
 ###
