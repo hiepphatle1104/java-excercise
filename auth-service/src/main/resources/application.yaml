@@ -11,6 +11,6 @@ spring:
     bootstrap-servers: "localhost:9092"
 kafka:
   topics:
+    user-created: "user-created"
     account-created: "account-created"
-    customer-created: "customer-created"
-    customer-failed: "customer-failed"
+    account-creation-failed: "account-creation-failed"
