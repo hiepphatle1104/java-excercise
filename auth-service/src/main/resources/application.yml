@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:h2:mem:accountdb
+    username: admin
+    password: admin
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 6061
+  
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

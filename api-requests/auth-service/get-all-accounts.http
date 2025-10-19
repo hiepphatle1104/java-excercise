@@ -1,4 +1,4 @@
 ### Get all accounts
-GET http://localhost:6061/api/auth
+GET http://localhost:6060/api/auth
 
 ###
