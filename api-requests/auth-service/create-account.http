@@ -1,0 +1,10 @@
+### Create new account
+POST http://localhost:6061/api/auth
+Content-Type: application/json
+
+{
+  "email": "test@gmail.com",
+  "password": "test@password"
+}
+
+###
