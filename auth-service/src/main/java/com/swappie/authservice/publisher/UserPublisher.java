@@ -37,7 +37,7 @@ public class UserPublisher {
                 log.info("Published event to topic [{}], offset={}", topicName, result.getRecordMetadata().offset());
             });
         } catch (JsonProcessingException e) {
-            log.error("Failed to serialize UserCreatedEvent: {}", e.getMessage(), e);
+            log.error("Failed to serialize event: {}", e.getMessage(), e);
         } catch (Exception e) {
             log.error("Unexpected error while publishing event: {}", e.getMessage(), e);
         }
