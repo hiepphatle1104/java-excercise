@@ -22,4 +22,7 @@ public class User {
 
     @NotNull
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 }
