@@ -1,6 +1,5 @@
 package com.swappie.authservice.dto.event;
 
-import com.swappie.authservice.domain.AccountEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

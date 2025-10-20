@@ -1,4 +1,4 @@
-package com.swappie.authservice.domain;
+package com.swappie.authservice.dto.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
