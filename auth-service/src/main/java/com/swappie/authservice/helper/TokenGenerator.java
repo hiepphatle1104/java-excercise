@@ -3,7 +3,7 @@ package com.swappie.authservice.helper;
 import java.util.UUID;
 
 public class TokenGenerator {
-    public static String generateToken() {
+    public static String generate() {
         return UUID.randomUUID().toString().replace("-", "");
     }
 }

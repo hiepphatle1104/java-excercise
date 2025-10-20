@@ -2,7 +2,9 @@ package com.swappie.authservice.helper;
 
 import com.swappie.authservice.domain.Session;
 import com.swappie.authservice.dto.SessionResponseDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SessionMapper {
     public static SessionResponseDTO toDTO(Session session) {
         SessionResponseDTO dto = new SessionResponseDTO();

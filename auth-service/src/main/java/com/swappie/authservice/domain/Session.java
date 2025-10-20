@@ -1,7 +1,9 @@
 package com.swappie.authservice.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,20 +17,21 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "sessions")
+@Builder
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    // FIXME: Serialize here
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @NotNull
+    private UUID userId;
 
-    @Column(name = "access_token", unique = true, nullable = false, length = 255)
+    @NotNull
+    @Column(name = "access_token", unique = true, length = 255)
     private String accessToken;
 
-    @Column(name = "refresh_token", unique = true, nullable = false, length = 255)
+    @NotNull
+    @Column(name = "refresh_token", unique = true, length = 255)
     private String refreshToken;
 
     @CreationTimestamp

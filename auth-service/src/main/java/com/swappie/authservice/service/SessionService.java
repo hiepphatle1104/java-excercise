@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,15 +23,21 @@ public class SessionService {
     }
 
 
+    // TODO: Enhanced this func
     public Session createSession(User user) {
-        Session session = new Session();
-        LocalDateTime now = LocalDateTime.now();
+        Optional<Session> result = sessionRepository.findByUserId(user.getId());
 
-        session.setUser(user);
-        session.setAccessToken(TokenGenerator.generateToken());
-        session.setRefreshToken(TokenGenerator.generateToken());
-        session.setExpiresAt(now.plusSeconds(ACCESS_TTL_SECONDS));
-        session.setRefreshExpiresAt(now.plusSeconds(REFRESH_TTL_SECONDS));
+        if (result.isPresent())
+            return result.get();
+
+        LocalDateTime now = LocalDateTime.now();
+        Session session = Session.builder()
+                .userId(user.getId())
+                .accessToken(TokenGenerator.generate())
+                .refreshToken(TokenGenerator.generate())
+                .expiresAt(now.plusSeconds(ACCESS_TTL_SECONDS))
+                .refreshExpiresAt(now.plusSeconds(REFRESH_TTL_SECONDS))
+                .build();
 
         return sessionRepository.save(session);
     }

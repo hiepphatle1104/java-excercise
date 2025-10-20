@@ -4,7 +4,9 @@ import com.swappie.authservice.domain.User;
 import com.swappie.authservice.domain.UserStatus;
 import com.swappie.authservice.dto.UserCreationRequest;
 import com.swappie.authservice.dto.UserResponseDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserMapper {
     public static User toDomain(UserCreationRequest request) {
         User user = new User();
