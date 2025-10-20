@@ -21,7 +21,7 @@ public class User {
     private String email;
 
     @NotNull
-    private String password;
+    private String passwordHash;
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;

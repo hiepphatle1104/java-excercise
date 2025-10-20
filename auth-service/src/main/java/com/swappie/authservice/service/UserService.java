@@ -8,7 +8,8 @@ import com.swappie.authservice.dto.UserResponseDTO;
 import com.swappie.authservice.dto.event.AccountCreatedEvent;
 import com.swappie.authservice.dto.event.AccountCreationFailedEvent;
 import com.swappie.authservice.exception.EmailAlreadyExistException;
-import com.swappie.authservice.mapper.UserMapper;
+import com.swappie.authservice.helper.PasswordHasher;
+import com.swappie.authservice.helper.UserMapper;
 import com.swappie.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,10 @@ public class UserService {
         if (userRepository.existsByEmail(request.getEmail()))
             throw new EmailAlreadyExistException("Email already exist");
 
-        User savedUser = userRepository.save(UserMapper.toDomain(request));
+        User user = UserMapper.toDomain(request);
+        user.setPasswordHash(PasswordHasher.hashPassword(request.getPassword()));
+
+        User savedUser = userRepository.save(user);
         userEventService.publishUserCreatedEvent(savedUser);
 
         return UserMapper.toDTO(savedUser);

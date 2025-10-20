@@ -1,4 +1,4 @@
-package com.swappie.authservice.mapper;
+package com.swappie.authservice.helper;
 
 import com.swappie.authservice.domain.User;
 import com.swappie.authservice.domain.UserStatus;
@@ -11,7 +11,6 @@ public class UserMapper {
 
         user.setStatus(UserStatus.PENDING);
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
 
         return user;
     }
