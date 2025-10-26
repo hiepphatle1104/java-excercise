@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: SPRING FOR BEGINNER
+
+  datasource:
+    # connect to db
+    url: jdbc:mysql://localhost:3308/my_db
+    username: root
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  #  t?ng gi?i h?n dung lu??ng upload file
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 15MB
+
+  app:
+    scrKey: "ftMUk2/X4NO1FHWJNkVqu2ZdbLXuSTW2FFiI+r3mGhQqc0eD+ehhrrG63Ru6yJtnmCoJPm8sOKVvhl4OqgHouw=="
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+
+
+
