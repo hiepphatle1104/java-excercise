@@ -25,6 +25,8 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
+    private String name;
+
     private String password;
 
     private Set<String> roles;
@@ -36,7 +38,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return "";
+        return this.name;
     }
 
     @Override

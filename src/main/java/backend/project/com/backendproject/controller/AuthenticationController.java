@@ -22,13 +22,13 @@ import java.text.ParseException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("v1")
+@RequestMapping("/api")
 @Slf4j
 public class AuthenticationController {
     
     private final AuthenticationService authenticationService;
     private final JwtService jwtService;
-    @PostMapping("/auth/login")
+    @PostMapping("/auth/signin")
     public ResponseEntity<ApiResponse<LoginResponse>> Login(@RequestBody LoginRequest loginRequest) {
         ApiResponse<LoginResponse> response = ApiResponse.<LoginResponse>builder()
                 .success(true)
