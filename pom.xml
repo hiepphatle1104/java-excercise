@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>backend.project.com</groupId>
-    <artifactId>BackendProject</artifactId>
+    <artifactId>swappie</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>BackendProject</name>
     <description>BackendProject</description>
