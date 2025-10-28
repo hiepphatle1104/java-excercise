@@ -12,10 +12,7 @@ import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -55,25 +52,53 @@ public class AuthenticationController {
 
 
     @PostMapping("/auth/signout")
-    public ResponseEntity<ApiResponse> logout(@RequestBody LogoutRequest logoutRequest)
-            throws ParseException, JOSEException {
-        authenticationService.Logout(logoutRequest);
+    public ResponseEntity<ApiResponse> logout(
+            // yêu cầu string trích xuất cookie
+            @CookieValue(name = "refreshToken", required = false) String refreshToken
+    ) throws ParseException, JOSEException {
+        authenticationService.Logout(refreshToken);
+
+        // vô hiệu hóa cookie có chứa RT
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(false) // Phải giống lúc tạo
+                .path("/")
+                .maxAge(0)     // Hết hạn ngay lập tức
+                .build();
+
         ApiResponse response = ApiResponse.builder()
                 .success(true)
                 .message("Logout Success")
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .body(response);
     }
 
     @PostMapping("/auth/createToken")
-    public ResponseEntity<ApiResponse<NewTokenResponse>> createNewToken(@RequestBody NewTokenRequest newTokenRequest)
-            throws ParseException, JOSEException {
+    public ResponseEntity<ApiResponse<NewTokenResponse>> createNewToken(
+            @CookieValue(name = "refreshToken", required = false ) String refreshToken
+    ) throws ParseException, JOSEException {
+        NewTokenResponse newToken = jwtService.createNewToken(refreshToken);
+
+        // update lại cookie chứa RT cũ hiện tại thành RT mới
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", newToken.getRefreshToken())
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .build();
+
+        newToken.setRefreshToken("");
         ApiResponse<NewTokenResponse> response = ApiResponse.<NewTokenResponse>builder()
                 .success(true)
                 .message("Tokens refreshed successfully")
-                .data(jwtService.createNewToken(newTokenRequest))
+                .data(newToken)
                 .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(response);
     }
     
 }
