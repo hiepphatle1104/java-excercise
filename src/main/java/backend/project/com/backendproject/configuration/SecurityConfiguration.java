@@ -34,10 +34,10 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/v1/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/v1/auth/logout").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/v1/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/v1/auth/createToken").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/signout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/createToken").permitAll()
                         .anyRequest().authenticated()
                 )
                 // VERIFY TOKEN

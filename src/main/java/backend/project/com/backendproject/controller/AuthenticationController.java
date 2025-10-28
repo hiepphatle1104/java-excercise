@@ -11,8 +11,7 @@ import backend.project.com.backendproject.service.JwtService;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,24 +21,40 @@ import java.text.ParseException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("v1")
+@RequestMapping("/api")
 @Slf4j
 public class AuthenticationController {
     
     private final AuthenticationService authenticationService;
     private final JwtService jwtService;
-    @PostMapping("/auth/login")
+    @PostMapping("/auth/signin")
     public ResponseEntity<ApiResponse<LoginResponse>> Login(@RequestBody LoginRequest loginRequest) {
+
+        LoginResponse loginResponse = authenticationService.login(loginRequest);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", loginResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .build();
+
+        loginResponse.setRefreshToken("");
+
         ApiResponse<LoginResponse> response = ApiResponse.<LoginResponse>builder()
                 .success(true)
                 .message("Login Success")
-                .data(authenticationService.login(loginRequest))
+                .data(loginResponse)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(response);
     }
 
 
-    @PostMapping("/auth/logout")
+    @PostMapping("/auth/signout")
     public ResponseEntity<ApiResponse> logout(@RequestBody LogoutRequest logoutRequest)
             throws ParseException, JOSEException {
         authenticationService.Logout(logoutRequest);
