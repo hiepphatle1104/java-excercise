@@ -1,20 +1,22 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: java-excercise
 
+  
   datasource:
-    # connect to db
-    url: jdbc:mysql://localhost:3308/my_db
+    url: jdbc:mysql://localhost:3308/swappie_db
     username: root
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: true
 
-  #  t?ng gi?i h?n dung lu??ng upload file
   servlet:
     multipart:
       max-file-size: 10MB
@@ -25,7 +27,7 @@ spring:
   data:
     redis:
       host: localhost
-      port: 6379
+      port: 6380
 
 
 
