@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: swappie
+    name: java-excercise
 
   
   datasource:

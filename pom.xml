@@ -8,10 +8,10 @@
         <version>3.5.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.swappie</groupId>
-    <artifactId>swappie</artifactId>
+    <groupId>com.java.excercise</groupId>
+    <artifactId>java-excercise</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>swappie</name>
+    <name>Java Excercise</name>
     <description>Second-hand trading platform</description>
     <url/>
     <licenses>
