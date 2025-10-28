@@ -39,7 +39,6 @@ public class UserService {
 
         User user = User.builder()
                 .email(userRequest.getEmail())
-                .name(userRequest.getName())
                 .password(passwordEncoder.encode(userRequest.getPassword()))
                 .roles(roles)
                 .build();
@@ -47,7 +46,6 @@ public class UserService {
         userRepository.save(user);
 
         return UserResponse.builder()
-                .name(user.getName())
                 .email(user.getEmail())
                 .roles(user.getRoles())
                 .build();
