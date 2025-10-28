@@ -1,13 +1,13 @@
 services:
   redis:
-    image: redis:7
-    container_name: Redis_2
+    image: redis
+    container_name: java-redis
     ports:
       - "6379:6379"
 
   mysql:
     image: mysql
-    container_name: MySql
+    container_name: java-mysql
     ports:
       - "3308:3306"
     environment:

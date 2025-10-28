@@ -1,6 +1,6 @@
 spring:
   application:
-    name: SPRING FOR BEGINNER
+    name: java-excercise
 
   datasource:
     # connect to db
