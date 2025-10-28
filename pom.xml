@@ -10,8 +10,8 @@
     </parent>
     <groupId>com.java.excercise</groupId>
     <artifactId>java-excercise</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>Java Excercise</name>
+    <version>1.0</version>
+    <name>java-excercise</name>
     <description>Second-hand trading platform</description>
     <url/>
     <licenses>

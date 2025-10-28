@@ -1,0 +1,55 @@
+services:
+  backend:
+    build: .
+    container_name: backend
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
+        condition: service_healthy # Chờ mysql sẵn sàng
+      redis:
+        condition: service_healthy # Chờ redis sẵn sàng
+    networks:
+      - service_network
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/app_database
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SERVER_PORT: 8081 # Required
+
+  redis:
+    image: redis
+    container_name: redis_db
+    healthcheck:
+      # Command to check redis is ready
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - service_network
+    ports:
+      - "6380:6379"
+
+  mysql:
+    image: mysql
+    container_name: mysql_db
+    healthcheck:
+      # Command to check mysql is ready
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-padmin" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "3308:3306"
+    networks:
+      - service_network
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: app_database
+
+networks:
+  service_network:
+    driver: bridge
