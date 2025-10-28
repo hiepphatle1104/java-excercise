@@ -15,6 +15,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration // 1. Đánh dấu đây là một lớp cấu hình
 @EnableWebSecurity
@@ -32,6 +37,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
@@ -67,6 +73,36 @@ public class SecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // QUAN TRỌNG: Thay đổi danh sách này bằng origin của frontend (ví dụ: "http://localhost:3000" cho React)
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "http://localhost:5173", // Vite
+                "http://localhost:4200", // Angular
+                "http://localhost:8080"  // Thêm các origin khác nếu cần
+        ));
+
+        // Cho phép các method này
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
+        // Cho phép các header này
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Cache-Control", "X-Requested-With"));
+
+        // Cho phép gửi cookie
+        configuration.setAllowCredentials(true);
+
+        // Thời gian cache cho pre-flight request (OPTIONS)
+        configuration.setMaxAge(3600L); // 1 giờ
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Áp dụng cấu hình này cho tất cả các đường dẫn
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }
