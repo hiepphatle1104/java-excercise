@@ -193,18 +193,26 @@ public class JwtService {
                 .build();
     }
 
-    public NewTokenResponse createNewToken(NewTokenRequest refreshToken) throws ParseException, JOSEException {
+    public NewTokenResponse createNewToken(String refreshToken) throws ParseException, JOSEException {
+
+        // kiểm tra xem RT có null hay empty không
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            throw new ApiError("RefreshToken is empty", HttpStatus.UNAUTHORIZED, "REFRESH_IS_EMPTY");
+        }
+
         // lấy thông tin trong token ra
-        JwtPayload jwtPayload = parseToken(refreshToken.getRefreshToken());
+        JwtPayload jwtPayload = parseToken(refreshToken);
         String jwtID = jwtPayload.getJwtID();
         String userID = jwtPayload.getUserID();
 
         // verify tokenprducts
-        verifyToken(refreshToken.getRefreshToken());
-        checkExpirationTime(refreshToken.getRefreshToken());
+        verifyToken(refreshToken);
+        checkExpirationTime(refreshToken);
 
         // check xem có tồn tại token này trong redis không
         if (!redisTokenRepository.existsById(jwtID)) {
+            // rơi vào case này thì có thể là user đã logout, đổi pass hoặc là đã từng yêu cầu câp token mới rồi
+            // khi này bắt user login lại
             throw new ApiError("Invalid Token", HttpStatus.UNAUTHORIZED, "INVALID_TOKEN");
         }
 

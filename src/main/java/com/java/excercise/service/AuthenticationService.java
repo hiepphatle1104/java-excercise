@@ -66,12 +66,12 @@ public class AuthenticationService {
     // Ở đây ta áp dụng Whitelist để quản lý refresh token
     // đánh đổi là nếu người dùng logout mà access token vẫn còn hạn thì token đó vẫn sẽ còn hiệu lực nhưng sau đó thì
     // không thể tạo ra access token mới vì ta đã vô hiệu hóa refresh token hiện tại của người dùng đó rồi
-    public void Logout(LogoutRequest logoutRequest) throws ParseException, JOSEException {
+    public void Logout(String refreshToken) throws ParseException, JOSEException {
         // verify token
         // không cần check expiration time vì khi người dùng logout thì họ chả quan tâm nó còn hạn hay không đâu
-        jwtService.verifyToken(logoutRequest.getRefreshToken());
+        jwtService.verifyToken(refreshToken);
 
-        String refreshTokenID = jwtService.parseToken(logoutRequest.getRefreshToken()).getJwtID();
+        String refreshTokenID = jwtService.parseToken(refreshToken).getJwtID();
         if (!redisTokenRepository.existsById(refreshTokenID)) {
             throw new ApiError("User was logout", HttpStatus.BAD_REQUEST, "BAD_REQUEST");
         }

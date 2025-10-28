@@ -19,7 +19,7 @@ public class UserController {
 
     private final UserService Userservice;
 
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public ResponseEntity<ApiResponse<UserResponse>> createUser(@RequestBody UserRequest userRequest) {
         ApiResponse<UserResponse> response = ApiResponse.<UserResponse>builder()
                 .success(true)
