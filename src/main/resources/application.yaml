@@ -6,6 +6,7 @@ spring:
     name: java-excercise
 
 
+  
   datasource:
     url: jdbc:mysql://localhost:3308/swappie_db
     username: root

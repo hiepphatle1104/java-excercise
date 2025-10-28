@@ -37,12 +37,14 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+                // THÊM CẤU HÌNH CORS
+                .cors(corsConfigurer -> corsConfigurer
+                        .configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/signout").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/createToken").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -75,15 +77,14 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
+    // BEAN CẤU HÌNH CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // QUAN TRỌNG: Thay đổi danh sách này bằng origin của frontend (ví dụ: "http://localhost:3000" cho React)
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
                 "http://localhost:5173", // Vite
-                "http://localhost:4200", // Angular
                 "http://localhost:8080"  // Thêm các origin khác nếu cần
         ));
 
