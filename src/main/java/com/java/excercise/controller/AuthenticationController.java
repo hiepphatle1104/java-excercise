@@ -1,0 +1,79 @@
+package com.java.excercise.controller;
+
+import com.java.excercise.dto.request.LoginRequest;
+import com.java.excercise.dto.request.LogoutRequest;
+import com.java.excercise.dto.request.NewTokenRequest;
+import com.java.excercise.dto.response.ApiResponse;
+import com.java.excercise.dto.response.LoginResponse;
+import com.java.excercise.dto.response.NewTokenResponse;
+import com.java.excercise.service.AuthenticationService;
+import com.java.excercise.service.JwtService;
+import com.nimbusds.jose.JOSEException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api")
+@Slf4j
+public class AuthenticationController {
+    
+    private final AuthenticationService authenticationService;
+    private final JwtService jwtService;
+    @PostMapping("/auth/signin")
+    public ResponseEntity<ApiResponse<LoginResponse>> Login(@RequestBody LoginRequest loginRequest) {
+
+        LoginResponse loginResponse = authenticationService.login(loginRequest);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", loginResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .build();
+
+        loginResponse.setRefreshToken("");
+
+        ApiResponse<LoginResponse> response = ApiResponse.<LoginResponse>builder()
+                .success(true)
+                .message("Login Success")
+                .data(loginResponse)
+                .build();
+
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(response);
+    }
+
+
+    @PostMapping("/auth/signout")
+    public ResponseEntity<ApiResponse> logout(@RequestBody LogoutRequest logoutRequest)
+            throws ParseException, JOSEException {
+        authenticationService.Logout(logoutRequest);
+        ApiResponse response = ApiResponse.builder()
+                .success(true)
+                .message("Logout Success")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/auth/createToken")
+    public ResponseEntity<ApiResponse<NewTokenResponse>> createNewToken(@RequestBody NewTokenRequest newTokenRequest)
+            throws ParseException, JOSEException {
+        ApiResponse<NewTokenResponse> response = ApiResponse.<NewTokenResponse>builder()
+                .success(true)
+                .message("Tokens refreshed successfully")
+                .data(jwtService.createNewToken(newTokenRequest))
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+    
+}
