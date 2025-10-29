@@ -3,7 +3,7 @@ services:
     build: .
     container_name: backend
     ports:
-      - "8081:8081"
+      - "8080:8080" # HOST:CONTAINER (Container default port is 8080)
     depends_on:
       mysql:
         condition: service_healthy # Chờ mysql sẵn sàng
@@ -12,12 +12,11 @@ services:
     networks:
       - service_network
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/app_database
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/app_database # Required for Docker networking
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: admin
-      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_HOST: redis # Required for Docker networking
       SPRING_DATA_REDIS_PORT: 6379
-      SERVER_PORT: 8081 # Required
 
   redis:
     image: redis
