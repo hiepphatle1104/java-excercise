@@ -76,7 +76,7 @@ public class AuthenticationController {
                 .body(response);
     }
 
-    @PostMapping("/auth/createToken")
+    @PostMapping("/auth/refresh")
     public ResponseEntity<ApiResponse<NewTokenResponse>> createNewToken(
             @CookieValue(name = "refreshToken", required = false ) String refreshToken
     ) throws ParseException, JOSEException {
