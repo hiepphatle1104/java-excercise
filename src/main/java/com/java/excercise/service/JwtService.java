@@ -157,7 +157,7 @@ public class JwtService {
         SignedJWT signedJWT = SignedJWT.parse(token);
 
         if (signedJWT.getJWTClaimsSet().getExpirationTime().before(new Date())) {
-            throw new ApiError("Token is expired", HttpStatus.UNAUTHORIZED, "EXPIRED");
+            throw new ApiError("Token is expired", HttpStatus.UNAUTHORIZED, "REFRESH_EXPIRED");
         }
     }
 
@@ -213,7 +213,7 @@ public class JwtService {
         if (!redisTokenRepository.existsById(jwtID)) {
             // rơi vào case này thì có thể là user đã logout, đổi pass hoặc là đã từng yêu cầu câp token mới rồi
             // khi này bắt user login lại
-            throw new ApiError("Invalid Token", HttpStatus.UNAUTHORIZED, "INVALID_TOKEN");
+            throw new ApiError("User was logout or another reason...", HttpStatus.UNAUTHORIZED, "INVALID_TOKEN");
         }
 
         // lấy user trong db ra
