@@ -193,7 +193,7 @@ public class JwtService {
                 .build();
     }
 
-    public NewTokenResponse createNewToken(String refreshToken) throws ParseException, JOSEException {
+    public String createNewToken(String refreshToken) throws ParseException, JOSEException {
 
         // kiểm tra xem RT có null hay empty không
         if (refreshToken == null || refreshToken.isEmpty()) {
@@ -243,7 +243,7 @@ public class JwtService {
                 .refreshToken(newRefreshToken.getToken())
                 .build();
 
-        return newTokenResponse;
+        return newRefreshToken.getToken();
     }
 
 

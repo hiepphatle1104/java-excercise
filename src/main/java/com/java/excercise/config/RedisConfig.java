@@ -1,4 +1,4 @@
-package com.java.excercise.configuration;
+package com.java.excercise.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -7,15 +7,15 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
 @Configuration
-public class RedisConfiguration {
+public class RedisConfig {
     @Value("${spring.data.redis.host}")
-    private String localhost;
+    private String redisHost;
 
     @Value("${spring.data.redis.port}")
-    private int port;
+    private int redisPort;
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(localhost, port));
+        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisHost, redisPort));
     }
 }
