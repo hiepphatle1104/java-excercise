@@ -33,7 +33,7 @@ public class TokenController {
         TokenList tokenList = jwtService.createNewToken(refreshToken);
 
         // Update new token
-        ResponseCookie cookie = CookieUtils.createCookie(refreshToken, tokenList.refreshToken());
+        ResponseCookie cookie = CookieUtils.createCookie("refreshToken", tokenList.refreshToken());
 
         var data = Map.of("accessToken", tokenList.accessToken());
         var resp = ApiResponse.success("token refresh success", data);
