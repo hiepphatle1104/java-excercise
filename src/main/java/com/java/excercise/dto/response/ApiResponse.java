@@ -13,7 +13,16 @@ public class ApiResponse<T> {
     private String message;
     private String errorCode;
     private HttpStatus status;
+    private String accessToken;
     private T data;
+
+    public static <T> ApiResponse<T> success(String message, String accessToken) {
+        return ApiResponse.<T>builder()
+            .success(true)
+            .message(message)
+            .accessToken(accessToken)
+            .build();
+    }
 
     public static <T> ApiResponse<T> success(String message, T data) {
         return ApiResponse.<T>builder()

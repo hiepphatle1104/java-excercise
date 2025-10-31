@@ -1,5 +1,6 @@
 package com.java.excercise.controller.auth;
 
+import com.java.excercise.dto.TokenList;
 import com.java.excercise.dto.response.ApiResponse;
 import com.java.excercise.service.JwtService;
 import com.java.excercise.utils.CookieUtils;
@@ -26,13 +27,13 @@ public class TokenController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> handle(
-            @CookieValue(name = "refreshToken", required = false) String refreshToken
+        @CookieValue(name = "refreshToken", required = false) String refreshToken
     ) throws ParseException, JOSEException {
-        var token = jwtService.createNewToken(refreshToken);
+        TokenList tokenList = jwtService.createNewToken(refreshToken);
 
         // Update new token
-        Cookie cookie = CookieUtils.createCookie(refreshToken, token);
-        var resp = ApiResponse.success("token refresh success");
+        Cookie cookie = CookieUtils.createCookie(refreshToken, tokenList.refreshToken());
+        var resp = ApiResponse.success("token refresh success", tokenList.accessToken());
 
         // NOTES: Không biết có nên để status CREATED hay không nha ( t nghĩ nên sửa thành ok )
         return ResponseEntity.status(HttpStatus.CREATED).header(HttpHeaders.SET_COOKIE, cookie.toString()).body(resp);
