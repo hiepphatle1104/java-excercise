@@ -1,10 +1,12 @@
 package com.java.excercise.exception;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 public class BaseException extends RuntimeException {
+    @JsonIgnore
     private final HttpStatus status;
     private final String errorCode;
 
