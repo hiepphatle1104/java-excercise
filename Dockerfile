@@ -1,4 +1,4 @@
-FROM openjdk:25-jdk-slim AS builder
+FROM maven:eclipse-temurin AS builder
 WORKDIR /app
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
@@ -7,7 +7,7 @@ COPY src ./src
 
 RUN ./mvnw clean package -DskipTests
 
-FROM openjdk:25-jdk-slim
+FROM maven:eclipse-temurin
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
