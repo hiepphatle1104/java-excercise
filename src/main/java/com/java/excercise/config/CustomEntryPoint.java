@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -26,9 +25,8 @@ public class CustomEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest req, HttpServletResponse res, AuthenticationException authException)
         throws IOException, ServletException {
 
-//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // luôn là UNAUTHENTICATED
+        res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // luôn là UNAUTHENTICATED
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
 
         // TODO: Need handle error here
         log.info(authException.getMessage());
@@ -67,7 +65,7 @@ public class CustomEntryPoint implements AuthenticationEntryPoint {
             }
         }
 
-        var resp = ApiResponse.error(message, HttpStatus.UNAUTHORIZED, errorCode);
+        var resp = ApiResponse.error(message, errorCode);
         mapper.writeValue(res.getWriter(), resp);
     }
 }
