@@ -5,7 +5,6 @@ import com.java.excercise.dto.JwtPayload;
 import com.java.excercise.dto.TokenList;
 import com.java.excercise.exception.ApiError;
 import com.java.excercise.exception.InvalidTokenException;
-import com.java.excercise.exception.TokenMissingException;
 import com.java.excercise.exception.UserNotFoundException;
 import com.java.excercise.model.RedisToken;
 import com.java.excercise.model.User;
@@ -35,6 +34,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JwtService {
 
+    //  ( using seconds )
+    public static final long ACCESS_TOKEN_TTL = 15 * 60; // 15 minutes
+    public static final long REFRESH_TOKEN_TTL = 14 * 60; // 14 minutes
+
     private final RedisTokenRepository redisTokenRepository;
     private final UserRepository userRepository;
 
@@ -60,13 +63,13 @@ public class JwtService {
         }
     }
 
-    public GeneratedToken generateAccessToken(User user) {
+    public GeneratedToken generateToken(User user, long duration) {
         // HEADER
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         // PAYLOAD
         Date issueTime = new Date();
-        Date expirationTime = Date.from(issueTime.toInstant().plus(15, ChronoUnit.MINUTES));
+        Date expirationTime = Date.from(issueTime.toInstant().plus(duration, ChronoUnit.SECONDS));
         String jwtID = UUID.randomUUID().toString();
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
@@ -101,57 +104,13 @@ public class JwtService {
             .token(serialize)
             .jwtPayload(resJwtPayload)
             .build();
-    }
-
-    public GeneratedToken generateRefreshToken(User user) {
-        // HEADER
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
-
-        // PAYLOAD
-        Date issueTime = new Date();
-        Date expirationTime = Date.from(issueTime.toInstant().plus(14, ChronoUnit.DAYS));
-        String jwtID = UUID.randomUUID().toString();
-
-        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-            .subject(user.getId())
-            .issueTime(issueTime)
-            .expirationTime(expirationTime)
-            .jwtID(jwtID)
-            .claim("scope", buildScope(user))
-            .build();
-
-        Payload payload = new Payload(claimsSet.toJSONObject());
-
-        // SIGNATURE
-        JWSObject jwsObject = new JWSObject(header, payload);
-        try {
-            jwsObject.sign(this.macSigner); // dùng signer đã tạo
-        } catch (JOSEException e) {
-            throw new RuntimeException(e);
-        }
-
-        // TẠO TOKEN
-        String serialize = jwsObject.serialize();
-        JwtPayload resJwtPayload = JwtPayload.builder()
-            .userID(user.getId())
-            .jwtID(jwtID)
-            .roles(user.getRoles())
-            .issueTime(issueTime)
-            .expirationTime(expirationTime)
-            .build();
-
-        return GeneratedToken.builder()
-            .token(serialize)
-            .jwtPayload(resJwtPayload)
-            .build();
-
     }
 
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-        if (!CollectionUtils.isEmpty(user.getRoles())) {
+        if (!CollectionUtils.isEmpty(user.getRoles()))
             user.getRoles().forEach(stringJoiner::add);
-        }
+
         return stringJoiner.toString();
     }
 
@@ -199,7 +158,7 @@ public class JwtService {
 
         // kiểm tra xem RT có null hay empty không
         if (refreshToken == null || refreshToken.isEmpty())
-            throw new TokenMissingException();
+            throw new InvalidTokenException();
 
         // lấy thông tin trong token ra
         JwtPayload jwtPayload = parseToken(refreshToken);
@@ -222,8 +181,8 @@ public class JwtService {
             throw new UserNotFoundException();
 
         // tạo token mới
-        GeneratedToken newAccessToken = generateAccessToken(user);
-        GeneratedToken newRefreshToken = generateRefreshToken(user);
+        GeneratedToken newAccessToken = generateToken(user, ACCESS_TOKEN_TTL);
+        GeneratedToken newRefreshToken = generateToken(user, REFRESH_TOKEN_TTL);
 
         // xóa token cũ và thêm token mới vào redis
         redisTokenRepository.deleteById(jwtID);

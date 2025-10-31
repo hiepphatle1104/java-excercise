@@ -41,8 +41,8 @@ public class AuthService {
         // nếu login thành công thì trả về token
         // lấy đối tượng user sau khi authenticated
         User user = (User) authenticate.getPrincipal();
-        GeneratedToken accessToken = jwtService.generateAccessToken(user);
-        GeneratedToken refreshToken = jwtService.generateRefreshToken(user);
+        GeneratedToken accessToken = jwtService.generateToken(user, JwtService.ACCESS_TOKEN_TTL);
+        GeneratedToken refreshToken = jwtService.generateToken(user, JwtService.REFRESH_TOKEN_TTL);
 
         // LƯU REFRESH TOKEN VÀO REDIS ĐỂ QUẢN LÝ
         RedisToken redisToken = RedisToken.map(refreshToken.getJwtPayload());
@@ -55,6 +55,9 @@ public class AuthService {
     // đánh đổi là nếu người dùng logout mà access token vẫn còn hạn thì token đó vẫn sẽ còn hiệu lực nhưng sau đó thì
     // không thể tạo ra access token mới vì ta đã vô hiệu hóa refresh token hiện tại của người dùng đó rồi
     public void logout(String refreshToken) throws ParseException, JOSEException {
+        if (refreshToken == null || refreshToken.isEmpty())
+            throw new InvalidTokenException();
+
         // verify token
         // không cần check expiration time vì khi người dùng logout thì họ chả quan tâm nó còn hạn hay không đâu
         jwtService.verifyToken(refreshToken);

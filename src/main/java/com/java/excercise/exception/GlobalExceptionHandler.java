@@ -21,16 +21,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ex.getStatus()).body(resp);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleException(Exception ex) {
-        var resp = ApiResponse.error(
-            "server error",
-            HttpStatus.INTERNAL_SERVER_ERROR,
-            "INTERNAL_SERVER_ERROR"
-        );
-
-        return ResponseEntity.status(resp.getStatus()).body(resp);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Object> handleException(Exception ex) {
+//        var resp = ApiResponse.error(
+//            "server error",
+//            HttpStatus.INTERNAL_SERVER_ERROR,
+//            "INTERNAL_SERVER_ERROR"
+//        );
+//
+//        return ResponseEntity.status(resp.getStatus()).body(resp);
+//    }
 
     // TODO: Need to remove error handler below
     @ExceptionHandler(ApiError.class)

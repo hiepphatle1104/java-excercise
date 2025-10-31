@@ -1,5 +1,6 @@
 package com.java.excercise.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +13,10 @@ public class ApiResponse<T> {
     private boolean success;
     private String message;
     private String errorCode;
-    private HttpStatus status;
     private T data;
+
+    @JsonIgnore
+    private HttpStatus status;
 
     public static <T> ApiResponse<T> success(String message, T data) {
         return ApiResponse.<T>builder()
