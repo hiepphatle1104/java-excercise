@@ -4,11 +4,11 @@ import com.java.excercise.dto.response.ApiResponse;
 import com.java.excercise.service.AuthService;
 import com.java.excercise.utils.CookieUtils;
 import com.nimbusds.jose.JOSEException;
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +32,7 @@ public class SignOutController {
         authService.logout(refreshToken);
 
         // Delete cookie
-        Cookie cookie = CookieUtils.deleteCookie("refreshToken");
+        ResponseCookie cookie = CookieUtils.deleteCookie("refreshToken");
 
         var response = ApiResponse.success("logout success");
         return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);

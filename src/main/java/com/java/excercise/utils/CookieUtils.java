@@ -1,27 +1,39 @@
 package com.java.excercise.utils;
 
-import jakarta.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CookieUtils {
-    public static Cookie createCookie(String name, String value) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-
-        return cookie;
+    public static ResponseCookie createCookie(String name, String value) {
+        return ResponseCookie
+            .from(name)
+            .value(value)
+            .httpOnly(true)
+            .secure(false)
+            .path("/")
+            .build();
     }
 
-    public static Cookie createCookie(String name, String value, int maxAge) {
-        Cookie cookie = createCookie(name, value);
-        cookie.setMaxAge(maxAge);
-
-        return cookie;
+    public static ResponseCookie createCookie(String name, String value, int maxAge) {
+        return ResponseCookie
+            .from(name)
+            .value(value)
+            .httpOnly(true)
+            .secure(false)
+            .path("/")
+            .maxAge(maxAge)
+            .build();
     }
 
-    public static Cookie deleteCookie(String name) {
-        return createCookie(name, "", 0);
+    public static ResponseCookie deleteCookie(String name) {
+        return ResponseCookie
+            .from(name)
+            .value("")
+            .httpOnly(true)
+            .secure(false)
+            .path("/")
+            .maxAge(0)
+            .build();
     }
 }
