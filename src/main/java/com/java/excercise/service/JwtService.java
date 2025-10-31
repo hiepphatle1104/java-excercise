@@ -60,9 +60,6 @@ public class JwtService {
         }
     }
 
-//    public GeneratedToken generateToken(User user, long minutes) {
-//    }
-
     public GeneratedToken generateAccessToken(User user) {
         // HEADER
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);

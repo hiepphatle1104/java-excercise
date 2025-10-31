@@ -1,5 +1,6 @@
 package com.java.excercise.controller.auth;
 
+import com.java.excercise.dto.TokenList;
 import com.java.excercise.dto.request.SignInRequest;
 import com.java.excercise.dto.response.ApiResponse;
 import com.java.excercise.service.AuthService;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth/signin")
@@ -24,12 +27,13 @@ public class SignInController {
 
     @PostMapping
     public ResponseEntity<?> handle(@RequestBody SignInRequest req) {
-        var token = authService.login(req);
+        TokenList tokenList = authService.login(req);
 
         // NOTES: Cookie chưa set max-age
-        Cookie cookie = CookieUtils.createCookie("refreshToken", token);
+        Cookie cookie = CookieUtils.createCookie("refreshToken", tokenList.refreshToken());
 
-        var resp = ApiResponse.success("login success");
+        var data = Map.of("accessToken", tokenList.accessToken());
+        var resp = ApiResponse.success("login success", data);
         return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, cookie.toString()).body(resp);
     }
 }

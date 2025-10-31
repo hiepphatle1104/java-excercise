@@ -1,6 +1,7 @@
 package com.java.excercise.service;
 
 import com.java.excercise.dto.GeneratedToken;
+import com.java.excercise.dto.TokenList;
 import com.java.excercise.dto.request.SignInRequest;
 import com.java.excercise.exception.InvalidCredentialsException;
 import com.java.excercise.exception.InvalidTokenException;
@@ -24,7 +25,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final RedisTokenRepository redis;
 
-    public String login(SignInRequest req) {
+    public TokenList login(SignInRequest req) {
         Authentication authenticate;
         try {
             // đóng gói username và password
@@ -40,14 +41,14 @@ public class AuthService {
         // nếu login thành công thì trả về token
         // lấy đối tượng user sau khi authenticated
         User user = (User) authenticate.getPrincipal();
-//        GeneratedToken accessToken = jwtService.generateAccessToken(user);
-        GeneratedToken token = jwtService.generateRefreshToken(user);
+        GeneratedToken accessToken = jwtService.generateAccessToken(user);
+        GeneratedToken refreshToken = jwtService.generateRefreshToken(user);
 
         // LƯU REFRESH TOKEN VÀO REDIS ĐỂ QUẢN LÝ
-        RedisToken redisToken = RedisToken.map(token.getJwtPayload());
+        RedisToken redisToken = RedisToken.map(refreshToken.getJwtPayload());
         redis.save(redisToken);
 
-        return token.getToken();
+        return new TokenList(refreshToken.getToken(), accessToken.getToken());
     }
 
     // Ở đây ta áp dụng Whitelist để quản lý refresh token
