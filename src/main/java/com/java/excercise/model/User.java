@@ -1,7 +1,11 @@
 package com.java.excercise.model;
 
+import com.java.excercise.dto.request.SignUpRequest;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,8 +17,7 @@ import java.util.Set;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
-@Getter
+@Data
 @Builder
 public class User implements UserDetails {
 
@@ -30,6 +33,15 @@ public class User implements UserDetails {
     private String password;
 
     private Set<String> roles;
+
+    public static User map(SignUpRequest req, Set<String> roles) {
+        return User.builder()
+                .email(req.email())
+                .name(req.name())
+                .roles(roles)
+                .password(req.password())
+                .build();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

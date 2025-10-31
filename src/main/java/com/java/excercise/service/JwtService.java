@@ -1,5 +1,16 @@
 package com.java.excercise.service;
 
+import com.java.excercise.dto.GeneratedToken;
+import com.java.excercise.dto.JwtPayload;
+import com.java.excercise.dto.TokenList;
+import com.java.excercise.exception.ApiError;
+import com.java.excercise.exception.InvalidTokenException;
+import com.java.excercise.exception.TokenMissingException;
+import com.java.excercise.exception.UserNotFoundException;
+import com.java.excercise.model.RedisToken;
+import com.java.excercise.model.User;
+import com.java.excercise.repository.RedisTokenRepository;
+import com.java.excercise.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -8,15 +19,6 @@ import com.nimbusds.jwt.SignedJWT;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.java.excercise.dto.GeneratedToken;
-import com.java.excercise.dto.JwtPayload;
-import com.java.excercise.dto.request.NewTokenRequest;
-import com.java.excercise.dto.response.NewTokenResponse;
-import com.java.excercise.exception.ApiError;
-import com.java.excercise.model.RedisToken;
-import com.java.excercise.model.User;
-import com.java.excercise.repository.RedisTokenRepository;
-import com.java.excercise.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,7 +35,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JwtService {
 
-    private final RedisTokenRepository  redisTokenRepository;
+    private final RedisTokenRepository redisTokenRepository;
     private final UserRepository userRepository;
 
     // SRC KEY
@@ -58,6 +60,9 @@ public class JwtService {
         }
     }
 
+//    public GeneratedToken generateToken(User user, long minutes) {
+//    }
+
     public GeneratedToken generateAccessToken(User user) {
         // HEADER
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
@@ -68,12 +73,12 @@ public class JwtService {
         String jwtID = UUID.randomUUID().toString();
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getId())
-                .issueTime(issueTime)
-                .expirationTime(expirationTime)
-                .jwtID(jwtID)
-                .claim("scope", buildScope(user))
-                .build();
+            .subject(user.getId())
+            .issueTime(issueTime)
+            .expirationTime(expirationTime)
+            .jwtID(jwtID)
+            .claim("scope", buildScope(user))
+            .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
 
@@ -88,17 +93,17 @@ public class JwtService {
         // TẠO TOKEN
         String serialize = jwsObject.serialize();
         JwtPayload resJwtPayload = JwtPayload.builder()
-                .userID(user.getId())
-                .jwtID(jwtID)
-                .roles(user.getRoles())
-                .issueTime(issueTime)
-                .expirationTime(expirationTime)
-                .build();
+            .userID(user.getId())
+            .jwtID(jwtID)
+            .roles(user.getRoles())
+            .issueTime(issueTime)
+            .expirationTime(expirationTime)
+            .build();
 
         return GeneratedToken.builder()
-                .token(serialize)
-                .jwtPayload(resJwtPayload)
-                .build();
+            .token(serialize)
+            .jwtPayload(resJwtPayload)
+            .build();
     }
 
     public GeneratedToken generateRefreshToken(User user) {
@@ -111,12 +116,12 @@ public class JwtService {
         String jwtID = UUID.randomUUID().toString();
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getId())
-                .issueTime(issueTime)
-                .expirationTime(expirationTime)
-                .jwtID(jwtID)
-                .claim("scope", buildScope(user))
-                .build();
+            .subject(user.getId())
+            .issueTime(issueTime)
+            .expirationTime(expirationTime)
+            .jwtID(jwtID)
+            .claim("scope", buildScope(user))
+            .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
 
@@ -131,21 +136,21 @@ public class JwtService {
         // TẠO TOKEN
         String serialize = jwsObject.serialize();
         JwtPayload resJwtPayload = JwtPayload.builder()
-                .userID(user.getId())
-                .jwtID(jwtID)
-                .roles(user.getRoles())
-                .issueTime(issueTime)
-                .expirationTime(expirationTime)
-                .build();
+            .userID(user.getId())
+            .jwtID(jwtID)
+            .roles(user.getRoles())
+            .issueTime(issueTime)
+            .expirationTime(expirationTime)
+            .build();
 
         return GeneratedToken.builder()
-                .token(serialize)
-                .jwtPayload(resJwtPayload)
-                .build();
+            .token(serialize)
+            .jwtPayload(resJwtPayload)
+            .build();
 
     }
 
-    private String buildScope (User user) {
+    private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
         if (!CollectionUtils.isEmpty(user.getRoles())) {
             user.getRoles().forEach(stringJoiner::add);
@@ -179,26 +184,25 @@ public class JwtService {
         String scope = signedJWT.getJWTClaimsSet().getStringClaim("scope");
         // tách nó ra và lưu vào set
         Set<String> roles = Arrays.stream(scope.split(" "))
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toSet());
+            .filter(s -> !s.isEmpty())
+            .collect(Collectors.toSet());
 
         Date issueTime = signedJWT.getJWTClaimsSet().getIssueTime();
         Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         return JwtPayload.builder()
-                .userID(userId)
-                .jwtID(jwtID)
-                .roles(roles)
-                .issueTime(issueTime)
-                .expirationTime(expirationTime)
-                .build();
+            .userID(userId)
+            .jwtID(jwtID)
+            .roles(roles)
+            .issueTime(issueTime)
+            .expirationTime(expirationTime)
+            .build();
     }
 
-    public NewTokenResponse createNewToken(String refreshToken) throws ParseException, JOSEException {
+    public TokenList createNewToken(String refreshToken) throws ParseException, JOSEException {
 
         // kiểm tra xem RT có null hay empty không
-        if (refreshToken == null || refreshToken.isEmpty()) {
-            throw new ApiError("RefreshToken is empty", HttpStatus.UNAUTHORIZED, "REFRESH_IS_EMPTY");
-        }
+        if (refreshToken == null || refreshToken.isEmpty())
+            throw new TokenMissingException();
 
         // lấy thông tin trong token ra
         JwtPayload jwtPayload = parseToken(refreshToken);
@@ -210,17 +214,15 @@ public class JwtService {
         checkExpirationTime(refreshToken);
 
         // check xem có tồn tại token này trong redis không
-        if (!redisTokenRepository.existsById(jwtID)) {
-            // rơi vào case này thì có thể là user đã logout, đổi pass hoặc là đã từng yêu cầu câp token mới rồi
-            // khi này bắt user login lại
-            throw new ApiError("User was logout or another reason...", HttpStatus.UNAUTHORIZED, "INVALID_TOKEN");
-        }
+        // rơi vào case này thì có thể là user đã logout, đổi pass hoặc là đã từng yêu cầu câp token mới rồi
+        // khi này bắt user login lại
+        if (!redisTokenRepository.existsById(jwtID))
+            throw new InvalidTokenException();
 
         // lấy user trong db ra
         User user = userRepository.findUserById(userID);
-        if (user == null) {
-            throw new ApiError("User not found", HttpStatus.NOT_FOUND, "USER_NOT_FOUND");
-        }
+        if (user == null)
+            throw new UserNotFoundException();
 
         // tạo token mới
         GeneratedToken newAccessToken = generateAccessToken(user);
@@ -228,22 +230,10 @@ public class JwtService {
 
         // xóa token cũ và thêm token mới vào redis
         redisTokenRepository.deleteById(jwtID);
-
-        RedisToken newToken = RedisToken.builder()
-                .jwtID(newRefreshToken.getJwtPayload().getJwtID())
-                .userID(newRefreshToken.getJwtPayload().getUserID())
-                .timeToLive(newRefreshToken.getJwtPayload().getExpirationTime().getTime() -
-                        newRefreshToken.getJwtPayload().getIssueTime().getTime())
-                .build();
+        var newToken = RedisToken.map(newRefreshToken.getJwtPayload());
 
         redisTokenRepository.save(newToken);
-
-        NewTokenResponse newTokenResponse = NewTokenResponse.builder()
-                .accessToken(newAccessToken.getToken())
-                .refreshToken(newRefreshToken.getToken())
-                .build();
-
-        return newTokenResponse;
+        return new TokenList(newRefreshToken.getToken(), newAccessToken.getToken());
     }
 
 

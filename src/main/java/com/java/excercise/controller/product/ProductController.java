@@ -1,4 +1,4 @@
-package com.java.excercise.controller;
+package com.java.excercise.controller.product;
 
 import com.java.excercise.dto.response.ApiResponse;
 import com.java.excercise.model.Product;
@@ -23,7 +23,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("/products")
-    public ResponseEntity<ApiResponse<Product>> create (@Valid @RequestBody Product product) {
+    public ResponseEntity<ApiResponse<Product>> create(@Valid @RequestBody Product product) {
         ApiResponse<Product> response = ApiResponse.<Product>builder()
                 .success(true)
                 .message("Product created successfully")

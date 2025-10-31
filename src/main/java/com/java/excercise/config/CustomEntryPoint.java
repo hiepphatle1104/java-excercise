@@ -1,12 +1,13 @@
-package com.java.excercise.configuration;
+package com.java.excercise.config;
 
-import com.java.excercise.dto.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.java.excercise.dto.response.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -18,24 +19,23 @@ import java.io.IOException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private final ObjectMapper objectMapper;
+public class CustomEntryPoint implements AuthenticationEntryPoint {
+    private final ObjectMapper mapper;
 
     @Override
+    public void commence(HttpServletRequest req, HttpServletResponse res, AuthenticationException authException)
+        throws IOException, ServletException {
 
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
-            throws IOException, ServletException {
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // luôn là UNAUTHENTICATED
+        res.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // luôn là UNAUTHENTICATED
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
+        // TODO: Need handle error here
         log.info(authException.getMessage());
         Throwable cause = authException.getCause();
 
-        boolean success = false;
         String message;
         String errorCode;
-
 
         if (cause instanceof JwtException) {
             String causeMessage = cause.getMessage();
@@ -61,19 +61,13 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                 errorCode = "AUTHENTICATION_FAILED";
             } else {
 
-            // Nếu không có cause, lấy message từ lỗi gốc
+                // Nếu không có cause, lấy message từ lỗi gốc
                 message = authException.getMessage();
                 errorCode = "AUTHENTICATION_FAILED";
             }
         }
 
-
-        ApiResponse apiResponse = ApiResponse.builder()
-                .success(success)
-                .message(message)
-                .errorCode(errorCode)
-                .build();
-        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+        var resp = ApiResponse.error(message, HttpStatus.UNAUTHORIZED, errorCode);
+        mapper.writeValue(res.getWriter(), resp);
     }
-
 }

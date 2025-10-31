@@ -14,16 +14,35 @@ import java.text.ParseException;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<Object> handleBaseException(BaseException ex) {
+
+        var resp = ApiResponse.error(ex.getMessage(), ex.getStatus(), ex.getErrorCode());
+        return ResponseEntity.status(ex.getStatus()).body(resp);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleException(Exception ex) {
+        var resp = ApiResponse.error(
+            "server error",
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "INTERNAL_SERVER_ERROR"
+        );
+
+        return ResponseEntity.status(resp.getStatus()).body(resp);
+    }
+
+    // TODO: Need to remove error handler below
     @ExceptionHandler(ApiError.class)
     public ResponseEntity<ApiResponse> handleException(ApiError error) {
         ApiResponse response = ApiResponse.builder()
-                .success(false)
-                .message(error.getMessage())
-                .errorCode(error.getErrorCode())
-                .build();
+            .success(false)
+            .message(error.getMessage())
+            .errorCode(error.getErrorCode())
+            .build();
         return ResponseEntity
-                .status(error.getStatus())
-                .body(response);
+            .status(error.getStatus())
+            .body(response);
     }
 
     // Handler cho việc verify token
@@ -41,28 +60,28 @@ public class GlobalExceptionHandler {
         }
 
         ApiResponse response = ApiResponse.builder()
-                .success(false)
-                .message(message)
-                .errorCode("MALFORMED")
-                .build();
+            .success(false)
+            .message(message)
+            .errorCode("MALFORMED")
+            .build();
 
         return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(response);
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(response);
     }
 
     // Handler cho việc authorize
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException e) {
         ApiResponse response = ApiResponse.builder()
-                .success(false)
-                .message("You do not have permission to access this resource.")
-                .errorCode("FORBIDDEN")
-                .build();
+            .success(false)
+            .message("You do not have permission to access this resource.")
+            .errorCode("FORBIDDEN")
+            .build();
 
         return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(response);
+            .status(HttpStatus.FORBIDDEN)
+            .body(response);
     }
 
 }

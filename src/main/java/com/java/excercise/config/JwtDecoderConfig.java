@@ -1,6 +1,5 @@
-package com.java.excercise.configuration;
+package com.java.excercise.config;
 
-import com.java.excercise.service.JwtService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,28 +17,26 @@ import java.nio.charset.StandardCharsets;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class JwtDecoderConfiguration implements JwtDecoder {
+public class JwtDecoderConfig implements JwtDecoder {
 
     // SRC KEY
     @Value("${spring.app.scrKey}")
-    private String srcKey;
-
+    private String secretKey;
     private NimbusJwtDecoder nimbusJwtDecoder;
-    private final JwtService jwtService;
 
     // KHỞI TẠO JWTDECODER
     @PostConstruct
     public void init() {
-        SecretKey secretKeySpec = new SecretKeySpec(srcKey.getBytes(StandardCharsets.UTF_8), "HS512");
-        nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
+        // NOTES: Xem coi chuyen sang HS256 cho vui
+        SecretKey secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "HS512");
+        nimbusJwtDecoder = NimbusJwtDecoder
+            .withSecretKey(secretKeySpec)
+            .macAlgorithm(MacAlgorithm.HS512)
+            .build();
     }
 
     @Override
     public Jwt decode(String token) {
-        Jwt jwt = nimbusJwtDecoder.decode(token);
-        return jwt;
+        return nimbusJwtDecoder.decode(token);
     }
-
 }

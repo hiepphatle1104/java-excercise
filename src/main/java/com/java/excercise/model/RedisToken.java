@@ -1,5 +1,6 @@
 package com.java.excercise.model;
 
+import com.java.excercise.dto.JwtPayload;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 @NoArgsConstructor
 @RedisHash("RedisHashRefreshToken")
 public class RedisToken {
-
     @Id
     private String jwtID;
     private String userID;
@@ -24,4 +24,15 @@ public class RedisToken {
     // time to live
     @TimeToLive(unit = TimeUnit.MILLISECONDS)
     private Long timeToLive;
+
+    public static RedisToken map(JwtPayload payload) {
+        var expirationTime = payload.getExpirationTime().getTime();
+        var issueTime = payload.getIssueTime().getTime();
+
+        return RedisToken.builder()
+            .jwtID(payload.getJwtID())
+            .userID(payload.getUserID())
+            .timeToLive(expirationTime - issueTime)
+            .build();
+    }
 }
