@@ -39,9 +39,11 @@ public class ProductController {
     public ResponseEntity<?> getAllProducts() {
         List<Product> products = productRepository.findAll();
 
-        Map<String, ProductDetail> detailMap = detailRepository.findAll().stream().collect(Collectors.toMap(detail -> detail.getProduct().getId(), detail -> detail));
+        Map<String, ProductDetail> detailMap = detailRepository.findAll().stream()
+                .collect(Collectors.toMap(detail -> detail.getProduct().getId(), detail -> detail));
 
-        Map<String, List<ProductImage>> imageMap = imageRepository.findAll().stream().collect(Collectors.groupingBy(image -> image.getProduct().getId()));
+        Map<String, List<ProductImage>> imageMap = imageRepository.findAll().stream()
+                .collect(Collectors.groupingBy(image -> image.getProduct().getId()));
 
         List<FullProductReponse> response = products.stream().map(product -> FullProductReponse.from(
                 product,
