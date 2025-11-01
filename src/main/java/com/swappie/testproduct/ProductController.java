@@ -98,18 +98,21 @@ public class ProductController {
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
-        Optional<Product> productOptional = productRepository.findById(id);
-        if (productOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Product productToDelete = productOptional.get();
-        Optional<ProductDetail> detailOptional = detailRepository.findByProduct(productToDelete);
-        detailOptional.ifPresent(detail -> detailRepository.delete(detail));
-        List<ProductImage> images = imageRepository.findAllByProduct(productToDelete);
-        if (!images.isEmpty()) {
-            imageRepository.deleteAll(images);
-        }
-        productRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return productRepository.findById(id)
+                .map(product -> {
+
+                    detailRepository.findByProduct(product)
+                            .ifPresent(detailRepository::delete);
+
+                    List<ProductImage> images = imageRepository.findAllByProduct(product);
+                    if (!images.isEmpty()) {
+                        imageRepository.deleteAll(images);
+                    }
+
+                    productRepository.deleteById(id);
+
+                    return ResponseEntity.noContent().<Void>build();
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }
