@@ -2,8 +2,6 @@ package com.java.excercise.service;
 
 import lombok.RequiredArgsConstructor;
 import com.java.excercise.exception.ApiError;
-import com.java.excercise.model.Product;
-import com.java.excercise.repository.ProductRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;

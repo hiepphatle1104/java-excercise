@@ -6,9 +6,7 @@ import com.java.excercise.dto.TokenList;
 import com.java.excercise.exception.ApiError;
 import com.java.excercise.exception.InvalidTokenException;
 import com.java.excercise.exception.UserNotFoundException;
-import com.java.excercise.model.RedisToken;
 import com.java.excercise.model.User;
-import com.java.excercise.repository.RedisTokenRepository;
 import com.java.excercise.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -32,7 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class JwtService {
+public class wtService {
 
     //  ( using seconds )
     public static final long ACCESS_TOKEN_TTL = 15 * 60; // 15 minutes
