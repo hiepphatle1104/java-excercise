@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -92,5 +93,23 @@ public class ProductController {
                 "message", "product created",
                 "data", Map.of("productId", savedProduct.getId())
         ));
+    }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
+        Optional<Product> productOptional = productRepository.findById(id);
+        if (productOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Product productToDelete = productOptional.get();
+        Optional<ProductDetail> detailOptional = detailRepository.findByProduct(productToDelete);
+        detailOptional.ifPresent(detail -> detailRepository.delete(detail));
+        List<ProductImage> images = imageRepository.findAllByProduct(productToDelete);
+        if (!images.isEmpty()) {
+            imageRepository.deleteAll(images);
+        }
+        productRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
