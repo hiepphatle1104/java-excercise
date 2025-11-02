@@ -1,6 +1,7 @@
 package com.swappie.testproduct;
 
 import com.swappie.testproduct.dto.ApiResponse;
+import com.swappie.testproduct.dto.FullProductReponse;
 import com.swappie.testproduct.dto.NewProductRequest;
 import com.swappie.testproduct.enums.ProductCategory;
 import com.swappie.testproduct.enums.ProductCondition;
