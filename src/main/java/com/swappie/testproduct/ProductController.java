@@ -1,5 +1,6 @@
 package com.swappie.testproduct;
 
+import com.swappie.testproduct.dto.ApiResponse;
 import com.swappie.testproduct.dto.FullProductReponse;
 import com.swappie.testproduct.dto.NewProductRequest;
 import com.swappie.testproduct.enums.ProductCategory;
@@ -46,14 +47,19 @@ public class ProductController {
         Map<String, List<ProductImage>> imageMap = imageRepository.findAll().stream()
                 .collect(Collectors.groupingBy(image -> image.getProduct().getId()));
 
-        List<FullProductReponse> response = products.stream().map(product -> FullProductReponse.from(
+        List<FullProductReponse> responseData = products.stream().map(product -> FullProductReponse.from(
                 product,
                 detailMap.get(product.getId()),
                 imageMap.get(product.getId())
         ))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        ApiResponse<List<FullProductReponse>> apiResponse = ApiResponse.success(
+                responseData,
+                "get all products successfully"
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @GetMapping("/{id}")
