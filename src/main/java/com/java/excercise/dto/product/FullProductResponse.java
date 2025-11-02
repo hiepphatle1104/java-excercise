@@ -12,9 +12,9 @@ public record FullProductResponse(
     String id,
     String name,
     String brand,
-    ProductStatus condition,
+    ProductStatus status,
     String description,
-    String data,
+    String date,
     ProductCategory category,
     ProductDetail detail,
     List<ProductImage> images
