@@ -95,45 +95,27 @@ public class ProductController {
                 "data", Map.of("productId", savedProduct.getId())
         ));
     }
-
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteProduct(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Object>> deleteProduct(@PathVariable String id) {
 
-        //tìm thực thể chính(Product)
         return productRepository.findById(id)
                 .map(product -> {
-                    //xóa thực thể phụ thuộc ProductDetail (nếu có)
                     detailRepository.findByProduct(product)
                             .ifPresent(detailRepository::delete);
 
-                    //xóa thực thể phụ thuộc ProductImage (nếu có)
                     List<ProductImage> images = imageRepository.findAllByProduct(product);
                     if (!images.isEmpty()) {
                         imageRepository.deleteAll(images);
                     }
-
-                    //xóa thực thể chính (Product)
                     productRepository.deleteById(id);
-
-                    //tạo và trả về JSON báo thành công (200 OK)
-                    ApiResponse response = ApiResponse.builder()
-                            .success(true)
-                            .message("delete successfully")
-                            .data(null)
-                            .build();
-
-                    return ResponseEntity.ok(response);
+                    return ResponseEntity.ok(
+                            ApiResponse.success(null, "delete successfully")
+                    );
                 })
                 .orElse(
-                        //nếu tìm thực thể chính tất bại sẽ tạo và trả về JSON báo lỗi (404 Not Found)
                         ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                                // ĐÃ SỬA: "success" (2 chữ 'c')
-                                ApiResponse.builder()
-                                        .success(false)
-                                        .message("Product not found with id: " + id)
-                                        .data(null)
-                                        .build()
+                                ApiResponse.error("Product not found with id: " + id)
                         )
                 );
     }
