@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -29,11 +30,35 @@ public class ProductController {
     private final DetailRepository detailRepository;
     private final ImageRepository imageRepository;
 
+//    @GetMapping
+//    public ResponseEntity<?> getAllProducts() {
+//        List<Product> products = productRepository.findAll();
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(products);
+//    }
     @GetMapping
     public ResponseEntity<?> getAllProducts() {
         List<Product> products = productRepository.findAll();
 
-        return ResponseEntity.status(HttpStatus.OK).body(products);
+        Map<String, ProductDetail> detailMap = detailRepository.findAll().stream()
+                .collect(Collectors.toMap(detail -> detail.getProduct().getId(), detail -> detail));
+
+        Map<String, List<ProductImage>> imageMap = imageRepository.findAll().stream()
+                .collect(Collectors.groupingBy(image -> image.getProduct().getId()));
+
+        List<FullProductReponse> responseData = products.stream().map(product -> FullProductReponse.from(
+                product,
+                detailMap.get(product.getId()),
+                imageMap.get(product.getId())
+        ))
+                .collect(Collectors.toList());
+
+        ApiResponse<List<FullProductReponse>> apiResponse = ApiResponse.success(
+                responseData,
+                "get all products successfully"
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @GetMapping("/{id}")
