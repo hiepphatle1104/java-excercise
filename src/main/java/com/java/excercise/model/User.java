@@ -7,9 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,7 +34,12 @@ public class User implements UserDetails {
 
     private String password;
 
-    private Set<String> roles;
+    //Vì Set<String> không được JPA hỗ trợ trực tiếp như một cột.
+    // Cho nên thêm những thứ ở dưới, chỉ cần lưu vai trò dạng chuỗi
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private Set<String> roles = new HashSet<>();
 
     public static User map(SignUpRequest req, Set<String> roles) {
         return User.builder()
@@ -43,14 +50,16 @@ public class User implements UserDetails {
                 .build();
     }
 
+    // Ở đây sử dụng List.of() nghĩa là user không có quyền nào
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .toList();
     }
-
     @Override
     public String getUsername() {
-        return "";
+        return email;
     }
 
     @Override
@@ -72,4 +81,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
+
 }

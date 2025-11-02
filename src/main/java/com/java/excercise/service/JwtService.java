@@ -73,12 +73,12 @@ public class JwtService {
         String jwtID = UUID.randomUUID().toString();
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-            .subject(user.getId())
-            .issueTime(issueTime)
-            .expirationTime(expirationTime)
-            .jwtID(jwtID)
-            .claim("scope", buildScope(user))
-            .build();
+                .subject(user.getId())
+                .issueTime(issueTime)
+                .expirationTime(expirationTime)
+                .jwtID(jwtID)
+                .claim("scope", buildScope(user))
+                .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
 
@@ -93,17 +93,17 @@ public class JwtService {
         // TẠO TOKEN
         String serialize = jwsObject.serialize();
         JwtPayload resJwtPayload = JwtPayload.builder()
-            .userID(user.getId())
-            .jwtID(jwtID)
-            .roles(user.getRoles())
-            .issueTime(issueTime)
-            .expirationTime(expirationTime)
-            .build();
+                .userID(user.getId())
+                .jwtID(jwtID)
+                .roles(user.getRoles())
+                .issueTime(issueTime)
+                .expirationTime(expirationTime)
+                .build();
 
         return GeneratedToken.builder()
-            .token(serialize)
-            .jwtPayload(resJwtPayload)
-            .build();
+                .token(serialize)
+                .jwtPayload(resJwtPayload)
+                .build();
     }
 
     private String buildScope(User user) {
@@ -140,18 +140,18 @@ public class JwtService {
         String scope = signedJWT.getJWTClaimsSet().getStringClaim("scope");
         // tách nó ra và lưu vào set
         Set<String> roles = Arrays.stream(scope.split(" "))
-            .filter(s -> !s.isEmpty())
-            .collect(Collectors.toSet());
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toSet());
 
         Date issueTime = signedJWT.getJWTClaimsSet().getIssueTime();
         Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         return JwtPayload.builder()
-            .userID(userId)
-            .jwtID(jwtID)
-            .roles(roles)
-            .issueTime(issueTime)
-            .expirationTime(expirationTime)
-            .build();
+                .userID(userId)
+                .jwtID(jwtID)
+                .roles(roles)
+                .issueTime(issueTime)
+                .expirationTime(expirationTime)
+                .build();
     }
 
     public TokenList createNewToken(String refreshToken) throws ParseException, JOSEException {
