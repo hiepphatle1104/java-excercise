@@ -1,5 +1,6 @@
 package com.swappie.testproduct;
 
+import com.swappie.testproduct.dto.FullProductReponse;
 import com.swappie.testproduct.dto.NewProductRequest;
 import com.swappie.testproduct.enums.ProductCategory;
 import com.swappie.testproduct.enums.ProductCondition;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -28,11 +30,30 @@ public class ProductController {
     private final DetailRepository detailRepository;
     private final ImageRepository imageRepository;
 
+//    @GetMapping
+//    public ResponseEntity<?> getAllProducts() {
+//        List<Product> products = productRepository.findAll();
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(products);
+//    }
     @GetMapping
     public ResponseEntity<?> getAllProducts() {
         List<Product> products = productRepository.findAll();
 
-        return ResponseEntity.status(HttpStatus.OK).body(products);
+        Map<String, ProductDetail> detailMap = detailRepository.findAll().stream()
+                .collect(Collectors.toMap(detail -> detail.getProduct().getId(), detail -> detail));
+
+        Map<String, List<ProductImage>> imageMap = imageRepository.findAll().stream()
+                .collect(Collectors.groupingBy(image -> image.getProduct().getId()));
+
+        List<FullProductReponse> response = products.stream().map(product -> FullProductReponse.from(
+                product,
+                detailMap.get(product.getId()),
+                imageMap.get(product.getId())
+        ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
