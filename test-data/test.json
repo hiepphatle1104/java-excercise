@@ -3,7 +3,7 @@
   "name": "test",
   "brand": "test-brand",
   "date": "2024",
-  "condition": "NEW",
+  "status": "NEW",
   "description": "test-description",
   "images": [
     "https://github.com/DanhKhongUs/EVBatteryReuse/blob/e0ebd474ec6fc69c63",
