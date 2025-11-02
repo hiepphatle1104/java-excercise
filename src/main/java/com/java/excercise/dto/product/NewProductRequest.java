@@ -7,7 +7,7 @@ public record NewProductRequest(
     String name,
     String brand,
     String date,
-    String condition,
+    String status,
     String description,
     List<String> images,
     ProductDetailRequest details

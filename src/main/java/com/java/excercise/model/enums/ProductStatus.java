@@ -1,6 +1,6 @@
 package com.java.excercise.model.enums;
 
-public enum ProductCondition {
+public enum ProductStatus {
     NEW,
     USED
 }
