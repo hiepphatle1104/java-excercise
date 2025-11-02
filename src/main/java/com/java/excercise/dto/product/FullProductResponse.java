@@ -4,27 +4,27 @@ import com.java.excercise.model.Product;
 import com.java.excercise.model.ProductDetail;
 import com.java.excercise.model.ProductImage;
 import com.java.excercise.model.enums.ProductCategory;
-import com.java.excercise.model.enums.ProductCondition;
+import com.java.excercise.model.enums.ProductStatus;
 
 import java.util.List;
 
-public record FullProductReponse(
+public record FullProductResponse(
     String id,
     String name,
     String brand,
-    ProductCondition condition,
+    ProductStatus condition,
     String description,
     String data,
     ProductCategory category,
     ProductDetail detail,
     List<ProductImage> images
 ) {
-    public static FullProductReponse from(Product product, ProductDetail detail, List<ProductImage> images) {
-        return new FullProductReponse(
+    public static FullProductResponse from(Product product, ProductDetail detail, List<ProductImage> images) {
+        return new FullProductResponse(
             product.getId(),
             product.getName(),
             product.getBrand(),
-            product.getCondition(),
+            product.getStatus(),
             product.getDescription(),
             product.getDate(),
             product.getCategory(),

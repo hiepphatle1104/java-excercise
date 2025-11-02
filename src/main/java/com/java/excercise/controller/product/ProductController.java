@@ -1,13 +1,13 @@
 package com.java.excercise.controller.product;
 
-import com.java.excercise.dto.product.FullProductReponse;
+import com.java.excercise.dto.product.FullProductResponse;
 import com.java.excercise.dto.product.NewProductRequest;
 import com.java.excercise.dto.response.ApiResponse;
 import com.java.excercise.model.Product;
 import com.java.excercise.model.ProductDetail;
 import com.java.excercise.model.ProductImage;
 import com.java.excercise.model.enums.ProductCategory;
-import com.java.excercise.model.enums.ProductCondition;
+import com.java.excercise.model.enums.ProductStatus;
 import com.java.excercise.repository.DetailRepository;
 import com.java.excercise.repository.ImageRepository;
 import com.java.excercise.repository.ProductRepository;
@@ -41,7 +41,7 @@ public class ProductController {
         Map<String, List<ProductImage>> imageMap = imageRepository.findAll().stream()
             .collect(Collectors.groupingBy(image -> image.getProduct().getId()));
 
-        List<FullProductReponse> responseData = products.stream().map(product -> FullProductReponse.from(
+        List<FullProductResponse> responseData = products.stream().map(product -> FullProductResponse.from(
                 product,
                 detailMap.get(product.getId()),
                 imageMap.get(product.getId())
@@ -85,7 +85,7 @@ public class ProductController {
             .brand(req.brand())
             .date(req.date())
             .description(req.description())
-            .condition(ProductCondition.valueOf(req.condition()))
+            .status(ProductStatus.valueOf(req.status()))
             .category(ProductCategory.valueOf(req.category()))
             .build();
 

@@ -1,7 +1,7 @@
 package com.java.excercise.model;
 
 import com.java.excercise.model.enums.ProductCategory;
-import com.java.excercise.model.enums.ProductCondition;
+import com.java.excercise.model.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +23,7 @@ public class Product {
     private String brand;
 
     @Enumerated(EnumType.STRING)
-    private ProductCondition condition;
+    private ProductStatus status;
     private String description;
     private String date;
 
