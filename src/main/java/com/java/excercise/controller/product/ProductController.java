@@ -1,6 +1,7 @@
 package com.java.excercise.controller.product;
 
 import com.java.excercise.dto.response.ApiResponse;
+import com.java.excercise.model.Product;
 import com.java.excercise.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

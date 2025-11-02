@@ -36,7 +36,7 @@ public class JwtService {
 
     //  ( using seconds )
     public static final long ACCESS_TOKEN_TTL = 15 * 60; // 15 minutes
-    public static final long REFRESH_TOKEN_TTL = 14 * 60; // 14 minutes
+    public static final long REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60; // 14 days
 
     private final RedisTokenRepository redisTokenRepository;
     private final UserRepository userRepository;

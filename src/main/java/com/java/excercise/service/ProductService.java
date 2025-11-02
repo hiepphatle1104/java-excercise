@@ -1,5 +1,7 @@
 package com.java.excercise.service;
 
+import com.java.excercise.model.Product;
+import com.java.excercise.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import com.java.excercise.exception.ApiError;
 import org.springframework.http.HttpStatus;
