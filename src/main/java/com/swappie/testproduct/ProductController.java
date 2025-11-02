@@ -1,7 +1,6 @@
 package com.swappie.testproduct;
 
 import com.swappie.testproduct.dto.ApiResponse;
-import com.swappie.testproduct.dto.FullProductReponse;
 import com.swappie.testproduct.dto.NewProductRequest;
 import com.swappie.testproduct.enums.ProductCategory;
 import com.swappie.testproduct.enums.ProductCondition;
@@ -121,13 +120,12 @@ public class ProductController {
                 "data", Map.of("productId", savedProduct.getId())
         ));
     }
-
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Object>> deleteProduct(@PathVariable String id) {
+
         return productRepository.findById(id)
                 .map(product -> {
-
                     detailRepository.findByProduct(product)
                             .ifPresent(detailRepository::delete);
 
@@ -135,11 +133,15 @@ public class ProductController {
                     if (!images.isEmpty()) {
                         imageRepository.deleteAll(images);
                     }
-
                     productRepository.deleteById(id);
-
-                    return ResponseEntity.noContent().<Void>build();
+                    return ResponseEntity.ok(
+                            ApiResponse.success(null, "delete successfully")
+                    );
                 })
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(
+                        ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                                ApiResponse.error("Product not found with id: " + id)
+                        )
+                );
     }
 }
