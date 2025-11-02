@@ -1,4 +1,4 @@
-package com.swappie.testproduct.enums;
+package com.java.excercise.model.enums;
 
 public enum ProductCondition {
     NEW,

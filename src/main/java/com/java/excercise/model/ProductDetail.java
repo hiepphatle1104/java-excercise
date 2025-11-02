@@ -1,4 +1,4 @@
-package com.swappie.testproduct.model;
+package com.java.excercise.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

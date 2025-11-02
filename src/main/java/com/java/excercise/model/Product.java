@@ -1,7 +1,7 @@
-package com.swappie.testproduct.model;
+package com.java.excercise.model;
 
-import com.swappie.testproduct.enums.ProductCategory;
-import com.swappie.testproduct.enums.ProductCondition;
+import com.java.excercise.model.enums.ProductCategory;
+import com.java.excercise.model.enums.ProductCondition;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

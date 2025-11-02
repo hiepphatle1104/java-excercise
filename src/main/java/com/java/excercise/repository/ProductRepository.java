@@ -1,6 +1,6 @@
-package com.swappie.testproduct.repository;
+package com.java.excercise.repository;
 
-import com.swappie.testproduct.model.Product;
+import com.java.excercise.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
