@@ -1,6 +1,6 @@
-package com.java.excercise.model;
+package com.java.excercise.model.entities;
 
-import com.java.excercise.dto.request.SignUpRequest;
+import com.java.excercise.dto.auth.SignUpRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,19 +40,20 @@ public class User implements UserDetails {
 
     public static User map(SignUpRequest req, Set<String> roles) {
         return User.builder()
-                .email(req.email())
-                .name(req.name())
-                .roles(roles)
-                .password(req.password())
-                .build();
+            .email(req.email())
+            .name(req.name())
+            .roles(roles)
+            .password(req.password())
+            .build();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                .toList();
+            .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+            .toList();
     }
+
     @Override
     public String getUsername() {
         return email;

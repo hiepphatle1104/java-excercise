@@ -1,6 +1,6 @@
 package com.java.excercise.config;
 
-import com.java.excercise.service.UserDetailServiceCustomize;
+import com.java.excercise.service.auth.UserDetailServiceCustomize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,8 +1,8 @@
 package com.java.excercise.dto.product;
 
-import com.java.excercise.model.Product;
-import com.java.excercise.model.ProductDetail;
-import com.java.excercise.model.ProductImage;
+import com.java.excercise.model.entities.Product;
+import com.java.excercise.model.entities.ProductDetail;
+import com.java.excercise.model.entities.ProductImage;
 import com.java.excercise.model.enums.ProductCategory;
 import com.java.excercise.model.enums.ProductStatus;
 

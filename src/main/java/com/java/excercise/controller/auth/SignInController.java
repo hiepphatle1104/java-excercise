@@ -1,9 +1,9 @@
 package com.java.excercise.controller.auth;
 
-import com.java.excercise.dto.TokenList;
-import com.java.excercise.dto.request.SignInRequest;
-import com.java.excercise.dto.response.ApiResponse;
-import com.java.excercise.service.AuthService;
+import com.java.excercise.dto.ApiResponse;
+import com.java.excercise.dto.auth.SignInRequest;
+import com.java.excercise.dto.auth.TokenList;
+import com.java.excercise.service.auth.AuthService;
 import com.java.excercise.utils.CookieUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

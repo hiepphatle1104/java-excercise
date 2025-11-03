@@ -1,6 +1,6 @@
 package com.java.excercise.exception;
 
-import com.java.excercise.dto.response.ApiResponse;
+import com.java.excercise.dto.ApiResponse;
 import com.nimbusds.jose.JOSEException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

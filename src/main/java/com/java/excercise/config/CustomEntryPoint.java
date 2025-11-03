@@ -1,7 +1,7 @@
 package com.java.excercise.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.java.excercise.dto.response.ApiResponse;
+import com.java.excercise.dto.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
