@@ -1,8 +1,9 @@
 package com.java.excercise.controller.product;
 
+import com.java.excercise.dto.ApiResponse;
 import com.java.excercise.dto.product.FullProductResponse;
 import com.java.excercise.dto.product.NewProductRequest;
-import com.java.excercise.dto.ApiResponse;
+import com.java.excercise.dto.product.UpdateProductRequest;
 import com.java.excercise.model.entities.Product;
 import com.java.excercise.model.entities.ProductDetail;
 import com.java.excercise.model.entities.ProductImage;
@@ -18,9 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import com.java.excercise.dto.product.UpdateProductRequest;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.List;
 import java.util.Map;
@@ -32,6 +30,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
+    // TODO: Lam product service
+    // TODO: Update chua xong
+    // TODO: Response get detail & get all chua co userId
+    // TODO: Chua co price
+    // TODO: Sua image response
+    // TODO: Upload image to Cloudinary
+    // TODO: Chia controller ra thanh nhieu file
+    // TODO: Handle transaction
+
     private final ProductRepository productRepository;
     private final DetailRepository detailRepository;
     private final ImageRepository imageRepository;
