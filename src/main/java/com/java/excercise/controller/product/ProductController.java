@@ -1,9 +1,24 @@
+package com.java.excercise.controller.product;
 
+import com.java.excercise.dto.ApiResponse;
+import com.java.excercise.dto.product.FullProductResponse;
+import com.java.excercise.dto.product.UpdateProductRequest;
+import com.java.excercise.model.entities.Product;
+import com.java.excercise.model.entities.ProductDetail;
+import com.java.excercise.model.entities.ProductImage;
+import com.java.excercise.model.enums.ProductCategory;
+import com.java.excercise.model.enums.ProductStatus;
+import com.java.excercise.repository.DetailRepository;
+import com.java.excercise.repository.ImageRepository;
+import com.java.excercise.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -146,7 +161,7 @@ public class ProductController {
 
         return ResponseEntity.ok(ApiResponse.success("Product updated successfully", responseData));
     }
-    }
+}
 
 
 
