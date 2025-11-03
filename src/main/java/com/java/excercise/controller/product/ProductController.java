@@ -53,47 +53,50 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(resp);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> getProduct(@PathVariable String id) {
-//        // TODO: Fix show product on fetch
-//        Optional<Product> result = productRepository.findById(id);
-//        if (result.isEmpty())
-//            return ResponseEntity.notFound().build();
-//
-//        Optional<ProductDetail> detailResult = detailRepository.findByProduct(result.get());
-//        if (detailResult.isEmpty())
-//            return ResponseEntity.notFound().build();
-//
-//        List<ProductImage> imageList = imageRepository.findAllByProduct(result.get());
-//        if (imageList.isEmpty())
-//            return ResponseEntity.notFound().build();
-//
-//        // TODO: Sua lai response
-//        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-//            "info", result.get(),
-//            "detail", detailResult.get(),
-//            "images", imageList
-//
-//        ));
-//    }
-
     @GetMapping("/{id}")
+    public ResponseEntity<?> getProduct(@PathVariable String id) {
+        // TODO: Fix show product on fetch
+        Optional<Product> result = productRepository.findById(id);
+        if (result.isEmpty())
+            return ResponseEntity.notFound().build();
+
+        Optional<ProductDetail> detailResult = detailRepository.findByProduct(result.get());
+        if (detailResult.isEmpty())
+            return ResponseEntity.notFound().build();
+
+        List<ProductImage> imageList = imageRepository.findAllByProduct(result.get());
+        if (imageList.isEmpty())
+            return ResponseEntity.notFound().build();
+
+        // TODO: Sua lai response
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+            "info", result.get(),
+            "detail", detailResult.get(),
+            "images", imageList
+
+        ));
+    }
+
+    @GetMapping("/{id}/detail")
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getProductById(@PathVariable String id) {
+    public ResponseEntity<?> getProductDetailById(@PathVariable String id) {
 
         return productRepository.findById(id).map(product -> {
 
-            ProductDetail detail = detailRepository.findByProduct(product).orElse(null);
+                ProductDetail detail = detailRepository.findByProduct(product).orElse(null);
+                List<ProductImage> images = imageRepository.findAllByProduct(product);
 
-            List<ProductImage> images = imageRepository.findAllByProduct(product);
+                FullProductResponse fullProductResponse = FullProductResponse.from(product, detail, images);
 
-            FullProductResponse fullProductResponse = FullProductResponse.from(product, detail, images);
-
-            return ResponseEntity.ok(ApiResponse.success("get product detail success", fullProductResponse));
-        })
+                return ResponseEntity.ok(ApiResponse.success("Get product detail success", fullProductResponse));
+            })
             .orElse(
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    ApiResponse.error("product not found", HttpStatus.NOT_FOUND, "PRODUCT_NOT_FOUND")
+                    ApiResponse.error(
+                        "product not found",
+                        HttpStatus.NOT_FOUND,
+                        "PRODUCT_NOT_FOUND"
+                    )
                 )
             );
     }
