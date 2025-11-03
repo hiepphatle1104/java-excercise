@@ -11,10 +11,12 @@ import java.util.List;
 // Test
 public record FullProductResponse(
     String id,
+    String userID,
     String name,
     String brand,
     ProductStatus status,
     String description,
+    Double price,
     String date,
     ProductCategory category,
     ProductDetail detail,
@@ -23,10 +25,12 @@ public record FullProductResponse(
     public static FullProductResponse from(Product product, ProductDetail detail, List<ProductImage> images) {
         return new FullProductResponse(
             product.getId(),
+            product.getUserId(),
             product.getName(),
             product.getBrand(),
             product.getStatus(),
             product.getDescription(),
+            product.getPrice(),
             product.getDate(),
             product.getCategory(),
             detail,
