@@ -55,30 +55,6 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(resp);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getProduct(@PathVariable String id) {
-        // TODO: Fix show product on fetch
-        Optional<Product> result = productRepository.findById(id);
-        if (result.isEmpty())
-            return ResponseEntity.notFound().build();
-
-        Optional<ProductDetail> detailResult = detailRepository.findByProduct(result.get());
-        if (detailResult.isEmpty())
-            return ResponseEntity.notFound().build();
-
-        List<ProductImage> imageList = imageRepository.findAllByProduct(result.get());
-        if (imageList.isEmpty())
-            return ResponseEntity.notFound().build();
-
-        // TODO: Sua lai response
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-            "info", result.get(),
-            "detail", detailResult.get(),
-            "images", imageList
-
-        ));
-    }
-
     @GetMapping("/{id}/detail")
     @Transactional(readOnly = true)
     public ResponseEntity<?> getProductDetailById(@PathVariable String id) {
