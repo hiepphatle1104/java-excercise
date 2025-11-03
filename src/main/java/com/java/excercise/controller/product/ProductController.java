@@ -40,57 +40,6 @@ public class ProductController {
     private final DetailRepository detailRepository;
     private final ImageRepository imageRepository;
 
-    @GetMapping
-    public ResponseEntity<?> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-
-        Map<String, ProductDetail> detailMap = detailRepository.findAll().stream()
-            .collect(Collectors.toMap(detail -> detail.getProduct().getId(), detail -> detail));
-
-        Map<String, List<ProductImage>> imageMap = imageRepository.findAll().stream()
-            .collect(Collectors.groupingBy(image -> image.getProduct().getId()));
-
-        List<FullProductResponse> responseData = products.stream().map(product -> FullProductResponse.from(
-                product,
-                detailMap.get(product.getId()),
-                imageMap.get(product.getId())
-            ))
-            .collect(Collectors.toList());
-
-        var resp = ApiResponse.success("get all products success", responseData);
-
-        return ResponseEntity.status(HttpStatus.OK).body(resp);
-    }
-
-    @GetMapping("/{id}")
-    @Transactional(readOnly = true)
-    public ResponseEntity<?> getProductDetailById(@PathVariable String id) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isEmpty()) {
-            ApiResponse errorResponse = ApiResponse.error(
-                "product not found", HttpStatus.NOT_FOUND, "PRODUCT NOT FOUND"
-            );
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
-        Product product = optionalProduct.get();
-
-        ProductDetail productDetail = detailRepository.findByProduct(product).orElse(null);
-
-        List<ProductImage> productImages = imageRepository.findAllByProduct(product);
-
-        FullProductResponse fullProductResponse = FullProductResponse.from(
-            product,
-            productDetail,
-            productImages
-        );
-
-        ApiResponse succesReponse = ApiResponse.success("get product detail success", fullProductResponse);
-
-        return ResponseEntity.ok(succesReponse);
-    }
-
-
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteProduct(@PathVariable String id) {
