@@ -91,31 +91,6 @@ public class ProductController {
     }
 
 
-    @Transactional
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteProduct(@PathVariable String id) {
-
-        return productRepository.findById(id)
-            .map(product -> {
-                detailRepository.findByProduct(product)
-                    .ifPresent(detailRepository::delete);
-
-                List<ProductImage> images = imageRepository.findAllByProduct(product);
-                if (!images.isEmpty()) {
-                    imageRepository.deleteAll(images);
-                }
-                productRepository.deleteById(id);
-                return ResponseEntity.ok(
-                    ApiResponse.success("product deleted")
-                );
-            })
-            .orElse(
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    ApiResponse.error("product not found", HttpStatus.BAD_REQUEST, "PRODUCT_NOT_FOUND")
-                )
-            );
-    }
-
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<?> updateProduct(
@@ -214,7 +189,7 @@ public class ProductController {
 
         return ResponseEntity.ok(ApiResponse.success("Product updated successfully", responseData));
     }
-    }
+}
 
 
 
