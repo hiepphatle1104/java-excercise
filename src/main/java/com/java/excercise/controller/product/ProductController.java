@@ -53,30 +53,50 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(resp);
     }
 
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> getProduct(@PathVariable String id) {
+//        // TODO: Fix show product on fetch
+//        Optional<Product> result = productRepository.findById(id);
+//        if (result.isEmpty())
+//            return ResponseEntity.notFound().build();
+//
+//        Optional<ProductDetail> detailResult = detailRepository.findByProduct(result.get());
+//        if (detailResult.isEmpty())
+//            return ResponseEntity.notFound().build();
+//
+//        List<ProductImage> imageList = imageRepository.findAllByProduct(result.get());
+//        if (imageList.isEmpty())
+//            return ResponseEntity.notFound().build();
+//
+//        // TODO: Sua lai response
+//        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+//            "info", result.get(),
+//            "detail", detailResult.get(),
+//            "images", imageList
+//
+//        ));
+//    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProduct(@PathVariable String id) {
-        // TODO: Fix show product on fetch
-        Optional<Product> result = productRepository.findById(id);
-        if (result.isEmpty())
-            return ResponseEntity.notFound().build();
+    @Transactional(readOnly = true)
+    public ResponseEntity<ApiResponse> getProductById(@PathVariable String id) {
 
-        Optional<ProductDetail> detailResult = detailRepository.findByProduct(result.get());
-        if (detailResult.isEmpty())
-            return ResponseEntity.notFound().build();
+        return productRepository.findById(id).map(product -> {
 
-        List<ProductImage> imageList = imageRepository.findAllByProduct(result.get());
-        if (imageList.isEmpty())
-            return ResponseEntity.notFound().build();
+            ProductDetail detail = detailRepository.findByProduct(product).orElse(null);
 
-        // TODO: Sua lai response
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-            "info", result.get(),
-            "detail", detailResult.get(),
-            "images", imageList
+            List<ProductImage> images = imageRepository.findAllByProduct(product);
 
-        ));
+            FullProductResponse fullProductResponse = FullProductResponse.from(product, detail, images);
+
+            return ResponseEntity.ok(ApiResponse.success("get product detail success", fullProductResponse));
+        })
+            .orElse(
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResponse.error("product not found", HttpStatus.BAD_REQUEST, "PRODUCT_NOT_FOUND")
+                )
+            );
     }
-
 
     @PostMapping
     public ResponseEntity<?> handle(@RequestBody NewProductRequest req) {
