@@ -14,6 +14,8 @@ import com.java.excercise.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -106,9 +108,12 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<?> handle(@RequestBody NewProductRequest req) {
+    public ResponseEntity<?> handle(@RequestBody NewProductRequest req, @AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getSubject();
+
         Product product = Product.builder()
             .name(req.name())
+            .userId(userId)
             .brand(req.brand())
             .date(req.date())
             .description(req.description())

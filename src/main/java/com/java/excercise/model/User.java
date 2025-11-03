@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -34,8 +33,6 @@ public class User implements UserDetails {
 
     private String password;
 
-    //Vì Set<String> không được JPA hỗ trợ trực tiếp như một cột.
-    // Cho nên thêm những thứ ở dưới, chỉ cần lưu vai trò dạng chuỗi
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
@@ -50,7 +47,6 @@ public class User implements UserDetails {
                 .build();
     }
 
-    // Ở đây sử dụng List.of() nghĩa là user không có quyền nào
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
