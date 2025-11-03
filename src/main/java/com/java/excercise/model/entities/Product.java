@@ -1,4 +1,4 @@
-package com.java.excercise.model;
+package com.java.excercise.model.entities;
 
 import com.java.excercise.model.enums.ProductCategory;
 import com.java.excercise.model.enums.ProductStatus;

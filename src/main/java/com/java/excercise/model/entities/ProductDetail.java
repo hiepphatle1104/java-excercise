@@ -1,4 +1,4 @@
-package com.java.excercise.model;
+package com.java.excercise.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -8,21 +8,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "product_images")
+@Table(name = "product_details")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductImage {
+public class ProductDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 
-    private String url;
-
     @JoinColumn(name = "product_id")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     private Product product;
+
+    private String batteryPercentage;
+    private String motorCapacity;
+    private String maximumDistance;
+    private String chargingTime;
+    private String weight;
 }

@@ -1,6 +1,6 @@
-package com.java.excercise.service;
+package com.java.excercise.service.auth;
 
-import com.java.excercise.model.User;
+import com.java.excercise.model.entities.User;
 import com.java.excercise.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,8 +1,8 @@
 package com.java.excercise.controller.auth;
 
-import com.java.excercise.dto.response.ApiResponse;
-import com.java.excercise.dto.response.UserResponse;
-import com.java.excercise.service.UserService;
+import com.java.excercise.dto.ApiResponse;
+import com.java.excercise.dto.auth.UserResponse;
+import com.java.excercise.service.auth.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

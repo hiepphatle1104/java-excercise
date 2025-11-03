@@ -1,7 +1,7 @@
 package com.java.excercise.controller.auth;
 
-import com.java.excercise.dto.response.ApiResponse;
-import com.java.excercise.service.AuthService;
+import com.java.excercise.dto.ApiResponse;
+import com.java.excercise.service.auth.AuthService;
 import com.java.excercise.utils.CookieUtils;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package com.java.excercise.controller.auth;
 
-import com.java.excercise.dto.TokenList;
-import com.java.excercise.dto.response.ApiResponse;
-import com.java.excercise.service.JwtService;
+import com.java.excercise.dto.ApiResponse;
+import com.java.excercise.dto.auth.TokenList;
+import com.java.excercise.service.auth.JwtService;
 import com.java.excercise.utils.CookieUtils;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;

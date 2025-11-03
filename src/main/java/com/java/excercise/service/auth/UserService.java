@@ -1,10 +1,10 @@
-package com.java.excercise.service;
+package com.java.excercise.service.auth;
 
-import com.java.excercise.dto.request.SignUpRequest;
-import com.java.excercise.dto.response.SignUpResponse;
-import com.java.excercise.dto.response.UserResponse;
+import com.java.excercise.dto.auth.SignUpRequest;
+import com.java.excercise.dto.auth.SignUpResponse;
+import com.java.excercise.dto.auth.UserResponse;
 import com.java.excercise.exception.EmailAlreadyExistsException;
-import com.java.excercise.model.User;
+import com.java.excercise.model.entities.User;
 import com.java.excercise.model.enums.UserRole;
 import com.java.excercise.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,16 +40,17 @@ public class UserService {
 
         return SignUpResponse.map(userRepo.save(user));
     }
-    // Get user
-    public UserResponse getUserDetail(String id){
-        User user = userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return  UserResponse.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .build();
+    // Get user
+    public UserResponse getUserDetail(String id) {
+        User user = userRepo.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return UserResponse.builder()
+            .id(user.getId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .build();
 
     }
 }

@@ -1,4 +1,4 @@
-package com.java.excercise.dto.response;
+package com.java.excercise.dto.auth;
 
 import lombok.Builder;
 import lombok.Data;

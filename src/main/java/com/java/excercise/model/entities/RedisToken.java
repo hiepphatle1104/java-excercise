@@ -1,6 +1,6 @@
-package com.java.excercise.model;
+package com.java.excercise.model.entities;
 
-import com.java.excercise.dto.JwtPayload;
+import com.java.excercise.dto.auth.JwtPayload;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

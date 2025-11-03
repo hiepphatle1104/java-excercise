@@ -1,12 +1,12 @@
-package com.java.excercise.service;
+package com.java.excercise.service.auth;
 
-import com.java.excercise.dto.GeneratedToken;
-import com.java.excercise.dto.TokenList;
-import com.java.excercise.dto.request.SignInRequest;
+import com.java.excercise.dto.auth.GeneratedToken;
+import com.java.excercise.dto.auth.SignInRequest;
+import com.java.excercise.dto.auth.TokenList;
 import com.java.excercise.exception.InvalidCredentialsException;
 import com.java.excercise.exception.InvalidTokenException;
-import com.java.excercise.model.RedisToken;
-import com.java.excercise.model.User;
+import com.java.excercise.model.entities.RedisToken;
+import com.java.excercise.model.entities.User;
 import com.java.excercise.repository.RedisTokenRepository;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;

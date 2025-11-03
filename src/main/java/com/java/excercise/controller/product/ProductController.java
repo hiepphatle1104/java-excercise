@@ -2,10 +2,10 @@ package com.java.excercise.controller.product;
 
 import com.java.excercise.dto.product.FullProductResponse;
 import com.java.excercise.dto.product.NewProductRequest;
-import com.java.excercise.dto.response.ApiResponse;
-import com.java.excercise.model.Product;
-import com.java.excercise.model.ProductDetail;
-import com.java.excercise.model.ProductImage;
+import com.java.excercise.dto.ApiResponse;
+import com.java.excercise.model.entities.Product;
+import com.java.excercise.model.entities.ProductDetail;
+import com.java.excercise.model.entities.ProductImage;
 import com.java.excercise.model.enums.ProductCategory;
 import com.java.excercise.model.enums.ProductStatus;
 import com.java.excercise.repository.DetailRepository;

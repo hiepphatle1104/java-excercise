@@ -1,4 +1,4 @@
-package com.java.excercise.dto.response;
+package com.java.excercise.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,9 +18,9 @@ public class ApiResponse<T> {
     @JsonIgnore
     private HttpStatus status;
 
-        public static <T> ApiResponse<T> success(String message, T data) {
-            return ApiResponse.<T>builder()
-                .success(true)
+    public static <T> ApiResponse<T> success(String message, T data) {
+        return ApiResponse.<T>builder()
+            .success(true)
             .message(message)
             .data(data)
             .build();

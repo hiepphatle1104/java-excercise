@@ -1,8 +1,8 @@
 package com.java.excercise.controller.auth;
 
-import com.java.excercise.dto.request.SignUpRequest;
-import com.java.excercise.dto.response.ApiResponse;
-import com.java.excercise.service.UserService;
+import com.java.excercise.dto.ApiResponse;
+import com.java.excercise.dto.auth.SignUpRequest;
+import com.java.excercise.service.auth.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
