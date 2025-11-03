@@ -131,12 +131,24 @@ public class ProductController {
 
         Product product = productOpt.get();
 
-        product.setName(req.name());
-        product.setBrand(req.brand());
-        product.setDate(req.date());
-        product.setDescription(req.description());
-        product.setStatus(ProductStatus.valueOf(req.status()));
-        product.setCategory(ProductCategory.valueOf(req.category()));
+        if (req.name() != null) {
+            product.setName(req.name());
+        }
+        if (req.brand() != null) {
+            product.setBrand(req.brand());
+        }
+        if (req.date() != null) {
+            product.setDate(req.date());
+        }
+        if (req.description() != null) {
+            product.setDescription(req.description());
+        }
+        if (req.status() != null) {
+            product.setStatus(ProductStatus.valueOf(req.status()));
+        }
+        if (req.category() != null) {
+            product.setCategory(ProductCategory.valueOf(req.category()));
+        }
 
         Product savedProduct = productRepository.save(product);
 
@@ -144,14 +156,25 @@ public class ProductController {
         ProductDetail detail;
 
         if (detailOpt.isPresent()) {
-
             detail = detailOpt.get();
-            detail.setBatteryPercentage(req.details().batteryPercentage());
-            detail.setMotorCapacity(req.details().motorCapacity());
-            detail.setMaximumDistance(req.details().maximumDistance());
-            detail.setChargingTime(req.details().chargingTime());
-            detail.setWeight(req.details().weight());
-        } else {
+            if (req.details() != null) {
+                if (req.details().batteryPercentage() != null) {
+                    detail.setBatteryPercentage(req.details().batteryPercentage());
+                }
+                if (req.details().motorCapacity() != null) {
+                    detail.setMotorCapacity(req.details().motorCapacity());
+                }
+                if (req.details().maximumDistance() != null) {
+                    detail.setMaximumDistance(req.details().maximumDistance());
+                }
+                if (req.details().chargingTime() != null) {
+                    detail.setChargingTime(req.details().chargingTime());
+                }
+                if (req.details().weight() != null) {
+                    detail.setWeight(req.details().weight());
+                }
+            }
+        } else if (req.details() != null) {
 
             detail = ProductDetail.builder()
                 .product(savedProduct)
@@ -161,23 +184,28 @@ public class ProductController {
                 .chargingTime(req.details().chargingTime())
                 .weight(req.details().weight())
                 .build();
-        }
-        detailRepository.save(detail);
-
-
-        List<ProductImage> existingImages = imageRepository.findAllByProduct(product);
-        if (!existingImages.isEmpty()) {
-            imageRepository.deleteAll(existingImages);
+        } else {
+            detail = null;
         }
 
-
-        for (String url : req.images()) {
-            imageRepository.save(ProductImage.builder()
-                .url(url)
-                .product(savedProduct)
-                .build());
+        if (detail != null) {
+            detailRepository.save(detail);
         }
 
+
+        if (req.images() != null) {
+            List<ProductImage> existingImages = imageRepository.findAllByProduct(product);
+            if (!existingImages.isEmpty()) {
+                imageRepository.deleteAll(existingImages);
+            }
+
+            for (String url : req.images()) {
+                imageRepository.save(ProductImage.builder()
+                    .url(url)
+                    .product(savedProduct)
+                    .build());
+            }
+        }
 
         ProductDetail updatedDetail = detailRepository.findByProduct(savedProduct).orElse(null);
         List<ProductImage> updatedImages = imageRepository.findAllByProduct(savedProduct);
@@ -186,5 +214,10 @@ public class ProductController {
 
         return ResponseEntity.ok(ApiResponse.success("Product updated successfully", responseData));
     }
+    }
 
-}
+
+
+
+
+
