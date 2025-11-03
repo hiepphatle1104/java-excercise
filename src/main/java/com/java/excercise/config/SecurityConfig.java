@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/auth/profile").permitAll()
                 .requestMatchers("/api/test").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                .requestMatchers("/api/products/**").permitAll() // mo cong cho /api/products de test bang postman
                 .anyRequest().authenticated()
             )
             // VERIFY TOKEN
