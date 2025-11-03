@@ -8,6 +8,7 @@ import com.java.excercise.model.enums.ProductStatus;
 
 import java.util.List;
 
+// Test
 public record FullProductResponse(
     String id,
     String name,
