@@ -79,7 +79,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    public ResponseEntity<ApiResponse> getProductById(@PathVariable String id) {
+    public ResponseEntity<?> getProductById(@PathVariable String id) {
 
         return productRepository.findById(id).map(product -> {
 
@@ -93,7 +93,7 @@ public class ProductController {
         })
             .orElse(
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    ApiResponse.error("product not found", HttpStatus.BAD_REQUEST, "PRODUCT_NOT_FOUND")
+                    ApiResponse.error("product not found", HttpStatus.NOT_FOUND, "PRODUCT_NOT_FOUND")
                 )
             );
     }
