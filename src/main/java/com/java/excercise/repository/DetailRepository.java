@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface DetailRepository extends JpaRepository<ProductDetail, Long> {
     Optional<ProductDetail> findByProduct(Product product);
+
+    void deleteProductDetailByProduct(Product product);
 }

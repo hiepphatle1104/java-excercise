@@ -1,7 +1,6 @@
 package com.java.excercise.controller.product;
 
 import com.java.excercise.dto.ApiResponse;
-import com.java.excercise.dto.product.FullProductResponse;
 import com.java.excercise.dto.product.UpdateProductRequest;
 import com.java.excercise.model.entities.Product;
 import com.java.excercise.model.entities.ProductDetail;
@@ -122,8 +121,9 @@ public class UpdateController {
         ProductDetail updatedDetail = detailRepository.findByProduct(savedProduct).orElse(null);
         List<ProductImage> updatedImages = imageRepository.findAllByProduct(savedProduct);
 
-        FullProductResponse responseData = FullProductResponse.from(savedProduct, updatedDetail, updatedImages);
-
-        return ResponseEntity.ok(ApiResponse.success("Product updated successfully", responseData));
+//        FullProductResponse responseData = FullProductResponse.from(savedProduct, updatedDetail, updatedImages);
+//
+//        return ResponseEntity.ok(ApiResponse.success("Product updated successfully", responseData));
+        return ResponseEntity.ok().build();
     }
 }

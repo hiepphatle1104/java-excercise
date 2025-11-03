@@ -2,52 +2,37 @@ package com.java.excercise.controller.product;
 
 import com.java.excercise.dto.ApiResponse;
 import com.java.excercise.dto.product.FullProductResponse;
-import com.java.excercise.model.entities.Product;
-import com.java.excercise.model.entities.ProductDetail;
-import com.java.excercise.model.entities.ProductImage;
-import com.java.excercise.repository.DetailRepository;
-import com.java.excercise.repository.ImageRepository;
-import com.java.excercise.repository.ProductRepository;
+import com.java.excercise.service.product.DetailService;
+import com.java.excercise.service.product.ImageService;
+import com.java.excercise.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class GetAllController {
-
-    private final ProductRepository productRepository;
-    private final DetailRepository detailRepository;
-    private final ImageRepository imageRepository;
+    private final ProductService productService;
+    private final DetailService detailService;
+    private final ImageService imageService;
 
     @GetMapping
-    public ResponseEntity<?> getAllProducts() {
-
-        List<Product> products = productRepository.findAll();
-
-        Map<String, ProductDetail> detailMap = detailRepository.findAll().stream()
-            .collect(Collectors.toMap(detail -> detail.getProduct().getId(), detail -> detail));
-
-        Map<String, List<ProductImage>> imageMap = imageRepository.findAll().stream()
-            .collect(Collectors.groupingBy(image -> image.getProduct().getId()));
-
-        List<FullProductResponse> responseData = products.stream()
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> handle() {
+        var products = productService.getAllProducts();
+        var respData = products
+            .stream()
             .map(product -> FullProductResponse.from(
                 product,
-                detailMap.get(product.getId()),
-                imageMap.get(product.getId())
-            ))
-            .collect(Collectors.toList());
+                detailService.getDetailByProduct(product),
+                imageService.getImagesByProduct(product)
+            ));
 
-        var resp = ApiResponse.success("get all products success", responseData);
-
+        var resp = ApiResponse.success("get all products success", respData);
         return ResponseEntity.ok(resp);
     }
 }
