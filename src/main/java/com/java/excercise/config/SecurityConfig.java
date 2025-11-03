@@ -3,7 +3,6 @@ package com.java.excercise.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,13 +34,9 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/auth/signout").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/auth/profile").permitAll()
-                .requestMatchers("/api/test").permitAll()
-                .requestMatchers("/api/products/**").permitAll() // mo cong cho /api/products de test bang postman
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/users").authenticated()
+                .requestMatchers("/api/products/**").authenticated()
                 .anyRequest().authenticated()
             )
             // VERIFY TOKEN
