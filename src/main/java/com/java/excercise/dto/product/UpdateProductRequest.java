@@ -1,0 +1,15 @@
+package com.java.excercise.dto.product;
+
+import java.util.List;
+
+public record UpdateProductRequest(
+    String category,
+    String name,
+    String brand,
+    String date,
+    String status,
+    String description,
+    List<String> images, // Danh sách URL ảnh mới
+    ProductDetailRequest details
+) {
+}
