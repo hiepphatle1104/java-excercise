@@ -65,7 +65,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(resp);
     }
 
-    @GetMapping("/{id}/detail")
+    @GetMapping("/{id}")
     @Transactional(readOnly = true)
     public ResponseEntity<?> getProductDetailById(@PathVariable String id) {
         Optional<Product> optionalProduct = productRepository.findById(id);
