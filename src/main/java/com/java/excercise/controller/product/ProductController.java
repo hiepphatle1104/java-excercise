@@ -77,6 +77,33 @@ public class ProductController {
         ));
     }
 
+    @GetMapping("/{id}/detail")
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getProductDetailById(@PathVariable String id) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if (optionalProduct.isEmpty()) {
+            ApiResponse errorResponse = ApiResponse.error(
+                "product not found", HttpStatus.NOT_FOUND, "PRODUCT NOT FOUND"
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
+        Product product = optionalProduct.get();
+
+        ProductDetail productDetail = detailRepository.findByProduct(product).orElse(null);
+
+        List<ProductImage> productImages = imageRepository.findAllByProduct(product);
+
+        FullProductResponse fullProductResponse = FullProductResponse.from(
+            product,
+            productDetail,
+            productImages
+        );
+
+        ApiResponse succesReponse = ApiResponse.success("get product detail success", fullProductResponse);
+
+        return ResponseEntity.ok(succesReponse);
+    }
 
     @PostMapping
     public ResponseEntity<?> handle(@RequestBody NewProductRequest req) {
