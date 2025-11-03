@@ -1,0 +1,20 @@
+{
+  "category": "VEHICLE",
+  "name": "test",
+  "brand": "test-brand",
+  "date": "2024",
+  "status": "NEW",
+  "description": "test-description",
+  "images": [
+    "https://github.com/DanhKhongUs/EVBatteryReuse/blob/e0ebd474ec6fc69c63",
+    "https://github.com/DanhKhongUs/EVBatteryReuse/blob/e0ebd474ec6fc69c63",
+    "https://github.com/DanhKhongUs/EVBatteryReuse/blob/e0ebd474ec6fc69c63"
+  ],
+  "details": {
+    "batteryPercentage": "80",
+    "motorCapacity": "100",
+    "maximumDistance": "12000",
+    "chargingTime": "200",
+    "weight": "2000"
+  }
+}
