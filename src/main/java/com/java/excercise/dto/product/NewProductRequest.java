@@ -9,6 +9,7 @@ public record NewProductRequest(
     String date,
     String status,
     String description,
+    Double price, //them price
     List<String> images,
     ProductDetailRequest details
 ) {

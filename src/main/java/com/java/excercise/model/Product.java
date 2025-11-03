@@ -25,6 +25,7 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
     private String description;
+    private Double price; //them price
     private String date;
 
     @Enumerated(EnumType.STRING)

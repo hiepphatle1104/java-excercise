@@ -85,6 +85,7 @@ public class ProductController {
             .brand(req.brand())
             .date(req.date())
             .description(req.description())
+            .price(req.price()) //them price tu req gan vao product
             .status(ProductStatus.valueOf(req.status()))
             .category(ProductCategory.valueOf(req.category()))
             .build();
