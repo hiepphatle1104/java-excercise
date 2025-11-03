@@ -4,7 +4,6 @@ import java.util.List;
 
 public record NewProductRequest(
     String category,
-    String userId,
     String name,
     String brand,
     String date,
