@@ -14,6 +14,8 @@ import com.java.excercise.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,11 +79,41 @@ public class ProductController {
         ));
     }
 
+    @GetMapping("/{id}/detail")
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getProductDetailById(@PathVariable String id) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if (optionalProduct.isEmpty()) {
+            ApiResponse errorResponse = ApiResponse.error(
+                "product not found", HttpStatus.NOT_FOUND, "PRODUCT NOT FOUND"
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
+        Product product = optionalProduct.get();
+
+        ProductDetail productDetail = detailRepository.findByProduct(product).orElse(null);
+
+        List<ProductImage> productImages = imageRepository.findAllByProduct(product);
+
+        FullProductResponse fullProductResponse = FullProductResponse.from(
+            product,
+            productDetail,
+            productImages
+        );
+
+        ApiResponse succesReponse = ApiResponse.success("get product detail success", fullProductResponse);
+
+        return ResponseEntity.ok(succesReponse);
+    }
 
     @PostMapping
-    public ResponseEntity<?> handle(@RequestBody NewProductRequest req) {
+    public ResponseEntity<?> handle(@RequestBody NewProductRequest req, @AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getSubject();
+
         Product product = Product.builder()
             .name(req.name())
+            .userId(userId)
             .brand(req.brand())
             .date(req.date())
             .description(req.description())
