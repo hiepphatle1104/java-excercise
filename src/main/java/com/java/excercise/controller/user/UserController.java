@@ -1,4 +1,4 @@
-package com.java.excercise.controller.auth;
+package com.java.excercise.controller.user;
 
 import com.java.excercise.dto.ApiResponse;
 import com.java.excercise.dto.auth.UserResponse;
@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth/profile")
+@RequestMapping("/api/users")
 public class UserController {
-
     private final UserService userService;
-
 
     @GetMapping()
     public ResponseEntity<ApiResponse<UserResponse>> getUserDetails(@AuthenticationPrincipal Jwt jwt) {
