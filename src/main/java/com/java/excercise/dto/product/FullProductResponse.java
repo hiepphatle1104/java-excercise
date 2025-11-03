@@ -11,6 +11,7 @@ import java.util.List;
 public record FullProductResponse(
     String id,
     String name,
+    String userId,
     String brand,
     ProductStatus status,
     String description,
@@ -23,6 +24,7 @@ public record FullProductResponse(
         return new FullProductResponse(
             product.getId(),
             product.getName(),
+            product.getUserId(),
             product.getBrand(),
             product.getStatus(),
             product.getDescription(),

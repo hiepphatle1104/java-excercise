@@ -82,6 +82,7 @@ public class ProductController {
     public ResponseEntity<?> handle(@RequestBody NewProductRequest req) {
         Product product = Product.builder()
             .name(req.name())
+            .userId(req.userId())
             .brand(req.brand())
             .date(req.date())
             .description(req.description())
