@@ -21,3 +21,11 @@ spring:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:localhost}
       port: ${SPRING_DATA_REDIS_PORT:6380}
+
+
+
+cloudinary:
+  cloud_name: dh7jjtfsx
+  api_key: 748535668753916
+  api_secret: 9QM1W76TlufrbdDBW9eqY9zEetk
+
