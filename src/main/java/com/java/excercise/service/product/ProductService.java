@@ -4,6 +4,7 @@ import com.java.excercise.exception.NotFoundException;
 import com.java.excercise.model.entities.Product;
 import com.java.excercise.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductService {
     private final ProductRepository productRepository;
 
@@ -36,5 +38,13 @@ public class ProductService {
 
     public Product updateProduct(String id, Product product) {
         return null;
+    }
+
+    public List<Product> findAllByUserId(String userId) {
+
+        List<Product> productList = productRepository.findAllByUserId(userId);
+        if(productList.isEmpty())
+            throw new NotFoundException("product not found", "PRODUCTS_NOT_FOUND");
+        return productList;
     }
 }
