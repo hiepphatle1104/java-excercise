@@ -15,4 +15,6 @@ public interface ImageRepository extends JpaRepository<ProductImage, Long> {
     List<ProductImage> findAllByProduct(Product product);
 
     void deleteProductImageByProduct(Product product);
+
+    void deleteAllByProduct(Product product);
 }

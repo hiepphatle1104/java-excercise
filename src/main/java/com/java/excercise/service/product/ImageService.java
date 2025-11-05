@@ -5,6 +5,7 @@ import com.java.excercise.model.entities.ProductImage;
 import com.java.excercise.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,5 +26,17 @@ public class ImageService {
 
     public void deleteImagesByProduct(Product product) {
         imageRepository.deleteProductImageByProduct(product);
+    }
+
+    @Transactional
+    public List<String> updateImage(Product product, List<String> request) {
+        List<ProductImage> images = imageRepository.findAllByProduct(product);
+        if (!request.isEmpty())
+            imageRepository.deleteAll(images);
+
+        for (String url : request)
+            imageRepository.save(new ProductImage(url, product));
+
+        return imageRepository.findAllByProduct(product).stream().map(ProductImage::getUrl).toList();
     }
 }
