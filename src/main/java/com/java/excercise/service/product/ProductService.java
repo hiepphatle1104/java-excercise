@@ -47,7 +47,7 @@ public class ProductService {
         product.setCategory(request.getCategory());
         product.setStatus(request.getStatus());
         product.setBrand(request.getBrand());
-        product.setDate(product.getDate());
+        product.setDate(request.getDate());
         product.setPrice(request.getPrice());
 
         return repo.save(product);
@@ -55,7 +55,7 @@ public class ProductService {
 
     public List<Product> findAllByUserId(String userId) {
 
-        List<Product> productList = productRepository.findAllByUserId(userId);
+        List<Product> productList = repo.findAllByUserId(userId);
         if(productList.isEmpty())
             throw new NotFoundException("product not found", "PRODUCTS_NOT_FOUND");
         return productList;

@@ -2,7 +2,9 @@ package com.java.excercise.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.java.excercise.dto.product.CloudinaryResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +14,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CloudinaryService {
     private final Cloudinary cloudinary;
 
@@ -23,7 +26,7 @@ public class CloudinaryService {
  * @return URL của ảnh sau khi upload
  * @throws IOException Ném lỗi nếu upload thất bại
  */
-    public String uploadFile(MultipartFile file) throws IOException {
+    public CloudinaryResponse uploadFile(MultipartFile file) throws IOException {
         // 1. Kiểm tra file
         if (file.isEmpty()) {
             throw new IOException("File rỗng, không thể upload.");
@@ -33,8 +36,8 @@ public class CloudinaryService {
         Map<String, Object> options = ObjectUtils.asMap(
             // Tự động phát hiện kiểu file (image, video, raw)
             "resource_type", "auto",
-            // Tạo một public_id ngẫu nhiên để tránh trùng tên file
-            "public_id", UUID.randomUUID().toString(),
+            // Xóa public_id tự tạo ở đây, để Cloudinary tự sinh
+//            "public_id", UUID.randomUUID().toString(),
             "folder", "javaSpring"
         );
 
@@ -44,6 +47,26 @@ public class CloudinaryService {
 
         // 4. Lấy URL an toàn (https) từ kết quả trả về
         // Kết quả trả về là một Map, 'secure_url' là key chứa link ảnh
-        return uploadResult.get("secure_url").toString();
+        String publicId = uploadResult.get("public_id").toString();
+        String url = uploadResult.get("secure_url").toString();
+        return new CloudinaryResponse(publicId, url);
+    }
+
+    /**
+     * Xóa file khỏi Cloudinary dựa trên public_id
+     */
+    public void deleteFile(String publicId) {
+        if (publicId == null || publicId.isEmpty()) {
+            log.warn("publicId rỗng, không thể xóa.");
+            return;
+        }
+
+        try {
+            Map<String, String> options = ObjectUtils.asMap("resource_type", "image");
+            cloudinary.uploader().destroy(publicId, options);
+            log.info("Đã xóa file khỏi Cloudinary: {}", publicId);
+        } catch (IOException e) {
+            log.error("Lỗi khi xóa file khỏi Cloudinary {}: {}", publicId, e.getMessage());
+        }
     }
 }

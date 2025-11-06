@@ -34,10 +34,11 @@ public class ProductMapper {
             .build();
     }
 
-    public static ProductImage toImage(String url, Product savedProduct) {
+    public static ProductImage toImage(String url,String publicId, Product savedProduct) {
         return ProductImage.builder()
             .url(url)
             .product(savedProduct)
+            .publicId(publicId)
             .build();
     }
 }

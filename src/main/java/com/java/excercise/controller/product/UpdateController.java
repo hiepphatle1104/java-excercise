@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,17 +25,34 @@ public class UpdateController {
     private final DetailService detailService;
     private final ImageService imageService;
 
+//    @PutMapping("/{id}")
+//    @Transactional
+//    public ResponseEntity<?> updateProduct(
+//        @PathVariable String id,
+//        @RequestBody @Valid UpdateProductRequest req
+//    ) {
+//        Product product = productService.updateProduct(id, req);
+//
+//        ProductDetail detail = detailService.updateDetail(product, req.getDetails());
+//
+//        List<String> images = imageService.updateImage(product, req.getImages());
+//
+//        FullProductResponse responseData = FullProductResponse.from(product, detail, images);
+//        return ResponseEntity.ok(ApiResponse.success("Product updated successfully", responseData));
+//    }
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<?> updateProduct(
         @PathVariable String id,
-        @RequestBody @Valid UpdateProductRequest req
+        @RequestPart(value = "product") UpdateProductRequest req,
+        @RequestPart(value = "images", required = false) List<MultipartFile> newImages
     ) {
         Product product = productService.updateProduct(id, req);
 
         ProductDetail detail = detailService.updateDetail(product, req.getDetails());
 
-        List<String> images = imageService.updateImage(product, req.getImages());
+        List<String> images = imageService.updateImage(product, newImages);
 
         FullProductResponse responseData = FullProductResponse.from(product, detail, images);
         return ResponseEntity.ok(ApiResponse.success("Product updated successfully", responseData));
