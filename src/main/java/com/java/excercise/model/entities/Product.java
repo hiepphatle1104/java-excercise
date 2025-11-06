@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "products")
 @Data
@@ -19,7 +21,9 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId")
+    private User user;
 
     private String name;
     private String brand;
@@ -27,9 +31,17 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
     private String description;
-    private Double price; //them price
+    private Double price;
     private String date;
 
     @Enumerated(EnumType.STRING)
     private ProductCategory category;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

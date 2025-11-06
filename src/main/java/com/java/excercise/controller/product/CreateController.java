@@ -1,73 +1,83 @@
 package com.java.excercise.controller.product;
 
+import com.java.excercise.dto.ApiResponse;
 import com.java.excercise.dto.product.NewProductRequest;
-import com.java.excercise.model.entities.Product;
-import com.java.excercise.model.entities.ProductDetail;
-import com.java.excercise.model.entities.ProductImage;
-import com.java.excercise.model.enums.ProductCategory;
-import com.java.excercise.model.enums.ProductStatus;
-import com.java.excercise.repository.DetailRepository;
-import com.java.excercise.repository.ImageRepository;
-import com.java.excercise.repository.ProductRepository;
+import com.java.excercise.exception.UploadfaileExeption;
+import com.java.excercise.mapper.ProductMapper;
+import com.java.excercise.service.CloudinaryService;
+import com.java.excercise.service.auth.UserService;
+import com.java.excercise.service.product.DetailService;
+import com.java.excercise.service.product.ImageService;
+import com.java.excercise.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class CreateController {
-    private final ProductRepository productRepository;
-    private final DetailRepository detailRepository;
-    private final ImageRepository imageRepository;
+    private final UserService userService;
+    private final ProductService productService;
+    private final DetailService detailService;
+    private final ImageService imageService;
+    private final CloudinaryService cloudinaryService;
+
+//    @PostMapping
+//    @Transactional
+//    public ResponseEntity<?> handle(@RequestBody NewProductRequest req, @AuthenticationPrincipal Jwt jwt) {
+//        String userId = jwt.getSubject();
+//        var user = userService.getUserById(userId);
+//
+//        var savedProduct = productService.createProduct(ProductMapper.toEntity(req, user));
+//        detailService.createDetail(ProductMapper.toDetail(savedProduct, req.details()));
+//
+//        if (!req.images().isEmpty())
+//            for (String url : req.images())
+//                imageService.createImage(ProductMapper.toImage(url, savedProduct));
+//
+//        var resp = ApiResponse.success("product created", savedProduct.getId());
+//        return ResponseEntity.ok(resp);
+//    }
 
     @PostMapping
-    public ResponseEntity<?> handle(@RequestBody NewProductRequest req, @AuthenticationPrincipal Jwt jwt) {
+    @Transactional
+    public ResponseEntity<?> handle(
+        // 1. Nhận data JSON (giống hệt NewProductRequest)
+        @RequestPart(value = "product") NewProductRequest req,
+        // 2. Nhận danh sách file ảnh
+        @RequestPart(value = "images", required = false)List<MultipartFile> images,
+        @AuthenticationPrincipal Jwt jwt
+    ) {
         String userId = jwt.getSubject();
+        var user = userService.getUserById(userId);
 
-        Product product = Product.builder()
-            .name(req.name())
-            .userId(userId)
-            .brand(req.brand())
-            .date(req.date())
-            .description(req.description())
-            .price(req.price()) //them price tu req gan vao product
-            .status(ProductStatus.valueOf(req.status()))
-            .category(ProductCategory.valueOf(req.category()))
-            .build();
+        var savedProduct = productService.createProduct(ProductMapper.toEntity(req, user));
+        detailService.createDetail(ProductMapper.toDetail(savedProduct, req.details()));
 
-        var savedProduct = productRepository.save(product);
+        // 3. Xử lý ảnh
+        if (images != null && !images.isEmpty()) {
+            for (MultipartFile file : images) {
+                try {
+                    // 5. Gọi cloudinary service để upload ảnh và lấy url về
+                    String imageUrl = cloudinaryService.uploadFile(file);
 
-        var productDetail = req.details();
-        ProductDetail detail = ProductDetail.builder()
-            .product(savedProduct)
-            .batteryPercentage(productDetail.batteryPercentage())
-            .chargingTime(productDetail.chargingTime())
-            .maximumDistance(productDetail.maximumDistance())
-            .motorCapacity(productDetail.motorCapacity())
-            .weight(productDetail.weight())
-            .build();
-        detailRepository.save(detail);
+                    // 6. Lưu Url này vào db như logic cũ
+                    imageService.createImage(ProductMapper.toImage(imageUrl, savedProduct));
+                } catch (Exception e) {
+                    throw new UploadfaileExeption();
+                }
+            }
+        }
 
-        for (String url : req.images())
-            imageRepository.save(ProductImage.builder()
-                .url(url)
-                .product(savedProduct)
-                .build());
-
-        // TODO: Sua lai response
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-            "message", "product created",
-            "data", Map.of("productId", savedProduct.getId())
-        ));
+        var resp = ApiResponse.success("product created", savedProduct.getId());
+        return ResponseEntity.ok(resp);
     }
 
 }

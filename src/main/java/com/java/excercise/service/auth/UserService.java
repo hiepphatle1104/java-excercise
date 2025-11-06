@@ -4,6 +4,7 @@ import com.java.excercise.dto.auth.SignUpRequest;
 import com.java.excercise.dto.auth.SignUpResponse;
 import com.java.excercise.dto.auth.UserResponse;
 import com.java.excercise.exception.EmailAlreadyExistsException;
+import com.java.excercise.exception.NotFoundException;
 import com.java.excercise.model.entities.User;
 import com.java.excercise.model.enums.UserRole;
 import com.java.excercise.repository.UserRepository;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -52,5 +54,13 @@ public class UserService {
             .email(user.getEmail())
             .build();
 
+    }
+
+    public User getUserById(String id) {
+        Optional<User> result = userRepo.findById(id);
+        if (result.isEmpty())
+            throw new NotFoundException("user not found", "USER_NOT_FOUND");
+
+        return result.get();
     }
 }

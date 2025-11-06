@@ -25,4 +25,9 @@ public class ProductImage {
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     private Product product;
+
+    public ProductImage(String url, Product product) {
+        this.url = url;
+        this.product = product;
+    }
 }
