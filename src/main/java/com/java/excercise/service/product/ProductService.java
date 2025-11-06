@@ -46,6 +46,7 @@ public class ProductService {
         product.setStatus(request.getStatus());
         product.setBrand(request.getBrand());
         product.setDate(product.getDate());
+        product.setPrice(request.getPrice());
 
         return repo.save(product);
     }
