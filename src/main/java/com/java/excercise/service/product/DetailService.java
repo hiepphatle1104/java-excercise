@@ -1,11 +1,13 @@
 package com.java.excercise.service.product;
 
+import com.java.excercise.dto.product.ProductDetailRequest;
 import com.java.excercise.exception.NotFoundException;
 import com.java.excercise.model.entities.Product;
 import com.java.excercise.model.entities.ProductDetail;
 import com.java.excercise.repository.DetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -28,5 +30,18 @@ public class DetailService {
 
     public void deleteDetailByProduct(Product product) {
         detailRepository.deleteProductDetailByProduct(product);
+    }
+
+    @Transactional
+    public ProductDetail updateDetail(Product product, ProductDetailRequest request) {
+        ProductDetail detail = getDetailByProduct(product);
+
+        detail.setBatteryPercentage(request.batteryPercentage());
+        detail.setMaximumDistance(request.maximumDistance());
+        detail.setWeight(request.weight());
+        detail.setChargingTime(request.chargingTime());
+        detail.setMotorCapacity(request.motorCapacity());
+
+        return detailRepository.save(detail);
     }
 }

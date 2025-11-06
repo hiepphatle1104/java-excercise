@@ -1,11 +1,13 @@
 package com.java.excercise.service.product;
 
+import com.java.excercise.dto.product.UpdateProductRequest;
 import com.java.excercise.exception.NotFoundException;
 import com.java.excercise.model.entities.Product;
 import com.java.excercise.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,18 +16,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class ProductService {
-    private final ProductRepository productRepository;
+    private final ProductRepository repo;
 
     public Product createProduct(Product product) {
-        return productRepository.save(product);
+        return repo.save(product);
     }
 
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        return repo.findAll();
     }
 
     public Product getProductById(String id) {
-        Optional<Product> result = productRepository.findById(id);
+        Optional<Product> result = repo.findById(id);
         if (result.isEmpty())
             throw new NotFoundException("product not found", "PRODUCT_NOT_FOUND");
 
@@ -33,11 +35,22 @@ public class ProductService {
     }
 
     public void deleteProduct(String id) {
-        productRepository.deleteById(id);
+        repo.deleteById(id);
     }
 
-    public Product updateProduct(String id, Product product) {
-        return null;
+    @Transactional
+    public Product updateProduct(String id, UpdateProductRequest request) {
+        Product product = getProductById(id);
+
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setCategory(request.getCategory());
+        product.setStatus(request.getStatus());
+        product.setBrand(request.getBrand());
+        product.setDate(product.getDate());
+        product.setPrice(request.getPrice());
+
+        return repo.save(product);
     }
 
     public List<Product> findAllByUserId(String userId) {
