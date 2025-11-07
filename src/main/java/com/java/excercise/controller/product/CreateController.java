@@ -1,6 +1,7 @@
 package com.java.excercise.controller.product;
 
 import com.java.excercise.dto.ApiResponse;
+import com.java.excercise.dto.product.CloudinaryResponse;
 import com.java.excercise.dto.product.NewProductRequest;
 import com.java.excercise.exception.UploadfaileExeption;
 import com.java.excercise.mapper.ProductMapper;
@@ -66,10 +67,12 @@ public class CreateController {
             for (MultipartFile file : images) {
                 try {
                     // 5. Gọi cloudinary service để upload ảnh và lấy url về
-                    String imageUrl = cloudinaryService.uploadFile(file);
+                    CloudinaryResponse uploadFile = cloudinaryService.uploadFile(file);
 
                     // 6. Lưu Url này vào db như logic cũ
-                    imageService.createImage(ProductMapper.toImage(imageUrl, savedProduct));
+                    imageService.createImage(ProductMapper
+                        .toImage(uploadFile.url(), uploadFile.publicId(), savedProduct)
+                    );
                 } catch (Exception e) {
                     throw new UploadfaileExeption();
                 }

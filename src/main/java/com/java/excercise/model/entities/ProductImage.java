@@ -21,13 +21,17 @@ public class ProductImage {
 
     private String url;
 
+    @Column(nullable = false)
+    private String publicId;
+
     @JoinColumn(name = "product_id")
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     private Product product;
 
-    public ProductImage(String url, Product product) {
+    public ProductImage(String url, String publicId, Product product) {
         this.url = url;
         this.product = product;
+        this.publicId = publicId;
     }
 }
