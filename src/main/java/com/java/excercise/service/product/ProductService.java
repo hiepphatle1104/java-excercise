@@ -6,6 +6,8 @@ import com.java.excercise.model.entities.Product;
 import com.java.excercise.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +24,16 @@ public class ProductService {
         return repo.save(product);
     }
 
-    public List<Product> getAllProducts() {
-        return repo.findAll();
+//    public List<Product> getAllProducts() {
+//        return repo.findAll();
+//    }
+
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public Page<Product> searchProducts(String query, Pageable pageable) {
+        return repo.findByNameContainingIgnoreCase(query, pageable);
     }
 
     public Product getProductById(String id) {
