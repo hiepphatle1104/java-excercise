@@ -9,6 +9,7 @@ import com.java.excercise.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ public class GetByUserIdController {
 
     @GetMapping()
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAnyAuthority('SCOPE_USER', 'SCOPE_ADMIN')")
     public ResponseEntity<?> findAllByUserId(@AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
         List<Product> productList = productService.findAllByUserId(userId);

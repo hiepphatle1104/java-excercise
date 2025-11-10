@@ -2,6 +2,7 @@ package com.java.excercise.controller.user;
 
 import com.java.excercise.dto.ApiResponse;
 import com.java.excercise.dto.auth.UserResponse;
+import com.java.excercise.dto.user.UserChangePasswordRequest;
 import com.java.excercise.dto.user.UserInfoDTO;
 import com.java.excercise.service.auth.UserService;
 import lombok.RequiredArgsConstructor;
@@ -56,4 +57,19 @@ public class UserController {
             .build();
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/change-password")
+        public ResponseEntity<ApiResponse<String>> changePassword(
+            @RequestBody UserChangePasswordRequest userChangePasswordRequest,
+            @AuthenticationPrincipal Jwt jwt
+        ) {
+            String id = jwt.getSubject(); // Lấy userId từ JWT
+
+            ApiResponse<String> response = ApiResponse.<String>builder()
+                .success(true)
+                .message("Change password successfully")
+                .data(userService.changePassword(id, userChangePasswordRequest))
+                .build();
+            return ResponseEntity.ok(response);
+        }
 }
