@@ -43,20 +43,14 @@ public class GetAllController {
     public ResponseEntity<?> getProducts(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
-        @RequestParam(required = false) String q // <-- 1. Thêm param 'q'
+        @RequestParam(required = false) String q, // <-- 1. Thêm param 'q'
+        @RequestParam(required = false) String category
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> productPage; // Dùng kiểu Page<Product>
 
-        // 2. Logic IF/ELSE
-        if (q != null && !q.trim().isEmpty()) {
-            // Nếu có 'q' -> Gọi hàm search
-            productPage = productService.searchProducts(q, pageable);
-        } else {
-            // Nếu không có 'q' -> Lấy tất cả (theo phân trang)
-            productPage = productService.getAllProducts(pageable);
-        }
-
+        // gọi 1 lần đến service là đủ
+        productPage = productService.getProducts(q, category, pageable);
         // 3. Map từ Page<Product> sang Page<FullProductResponse>
         Page<FullProductResponse> dtoPage = productPage.map(product -> {
             var detail = detailService.getDetailByProduct(product);

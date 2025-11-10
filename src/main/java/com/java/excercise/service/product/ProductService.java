@@ -3,6 +3,7 @@ package com.java.excercise.service.product;
 import com.java.excercise.dto.product.UpdateProductRequest;
 import com.java.excercise.exception.NotFoundException;
 import com.java.excercise.model.entities.Product;
+import com.java.excercise.model.enums.ProductCategory;
 import com.java.excercise.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +29,42 @@ public class ProductService {
 //        return repo.findAll();
 //    }
 
-    public Page<Product> getAllProducts(Pageable pageable) {
-        return repo.findAll(pageable);
-    }
+//    public Page<Product> getAllProducts(Pageable pageable) {
+//        return repo.findAll(pageable);
+//    }
+//
+//    public Page<Product> searchProducts(String query, Pageable pageable) {
+//        return repo.findByNameContainingIgnoreCase(query, pageable);
+//    }
 
-    public Page<Product> searchProducts(String query, Pageable pageable) {
-        return repo.findByNameContainingIgnoreCase(query, pageable);
+    public Page<Product> getProducts(String q, String category, Pageable pageable) {
+        // check xem fe gửi lên những gì
+        boolean hasQuery = q != null && !q.trim().isEmpty();
+        boolean hasCategory = category != null && !category.trim().isEmpty()
+            && !category.equalsIgnoreCase("Tất cả sản phẩm");
+
+        // Nếu có category, convert String sang Enum
+        ProductCategory categoryEnum = null;
+        if (hasCategory) {
+            try {
+                categoryEnum = ProductCategory.valueOf(category.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.err.println("Invalid category value: " + category);
+                return Page.empty(pageable);
+            }
+        }
+
+        if (hasQuery && hasCategory) {
+            // 1. có cả tên và category => lọc kết hợp
+            return repo.findByNameContainingIgnoreCaseAndCategory(q, categoryEnum, pageable);
+        } else if (hasQuery) {
+            // 2. chỉ có tên => search
+            return repo.findByNameContainingIgnoreCase(q, pageable);
+        } else if (hasCategory) {
+            return repo.findByCategory(categoryEnum, pageable);
+        } else  {
+            return repo.findAll(pageable);
+        }
     }
 
     public Product getProductById(String id) {

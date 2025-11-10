@@ -4,9 +4,11 @@ import com.java.excercise.dto.auth.SignUpRequest;
 import com.java.excercise.dto.auth.SignUpResponse;
 import com.java.excercise.dto.auth.UserResponse;
 import com.java.excercise.dto.user.UserAddressDTO;
+import com.java.excercise.dto.user.UserChangePasswordRequest;
 import com.java.excercise.dto.user.UserInfoDTO;
 import com.java.excercise.dto.user.UserProfileDTO;
 import com.java.excercise.exception.EmailAlreadyExistsException;
+import com.java.excercise.exception.InvalidUserPassword;
 import com.java.excercise.exception.NotFoundException;
 import com.java.excercise.mapper.UserMapper;
 import com.java.excercise.model.entities.User;
@@ -152,5 +154,18 @@ public class UserService {
             UserMapper.toProfileDTO(info.get().getUserProfile()),
             UserMapper.toAddressDTO(info.get().getUserAddress())
         );
+    }
+
+    @Transactional
+    public String changePassword(String id, UserChangePasswordRequest request) {
+        User user = userRepo.findById(id)
+            .orElseThrow(() -> new NotFoundException("user not found", "USER_NOT_FOUND"));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new InvalidUserPassword();
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepo.save(user);
+        return "Change password successfully";
     }
 }
