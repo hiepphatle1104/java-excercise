@@ -3,6 +3,7 @@ package com.java.excercise.service.auth;
 import com.java.excercise.dto.auth.SignUpRequest;
 import com.java.excercise.dto.auth.SignUpResponse;
 import com.java.excercise.dto.auth.UserResponse;
+import com.java.excercise.dto.product.CloudinaryResponse;
 import com.java.excercise.dto.user.UserAddressDTO;
 import com.java.excercise.dto.user.UserChangePasswordRequest;
 import com.java.excercise.dto.user.UserInfoDTO;
@@ -18,13 +19,16 @@ import com.java.excercise.model.entities.UserProfile;
 import com.java.excercise.model.enums.UserRole;
 import com.java.excercise.repository.UserInfoRepository;
 import com.java.excercise.repository.UserRepository;
+import com.java.excercise.service.CloudinaryService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
@@ -39,6 +43,9 @@ public class UserService {
     private final UserInfoRepository userInfoRepo;
     private final EntityManager entityManager;
 
+    private final CloudinaryService cloudinaryService;
+
+    @Transactional
     public SignUpResponse createUser(SignUpRequest req) {
         if (userRepo.existsByEmail(req.email()))
             throw new EmailAlreadyExistsException();
@@ -55,7 +62,15 @@ public class UserService {
         User user = User.map(req, roles);
         user.setPassword(passwordEncoder.encode(req.password()));
 
-        return SignUpResponse.map(userRepo.save(user));
+        User save = userRepo.save(user);
+
+        // tạo user info rỗng
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(user.getId());
+        userInfo.setUser(user);
+        userInfoRepo.save(userInfo);
+
+        return SignUpResponse.map(save);
     }
 
     // Get user
@@ -167,5 +182,31 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepo.save(user);
         return "Change password successfully";
+    }
+
+    @Transactional
+    public String upLoadAvt(String id, MultipartFile avt) throws IOException {
+        // 1. tìm userinfo
+        UserInfo info = userInfoRepo.findById(id)
+            .orElseGet(() -> createNewUserInfo(id));
+        // 2.  kiểm tra xem user có gửi file không
+        if (avt.isEmpty()) {
+            throw new NotFoundException("file not found", "FILE_NOT_FOUND");
+        }
+        // 3. upload ảnh
+        CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(avt);
+        // 4. kiểm tra xem userinfo đã có ảnh cũ chưa
+        if (info.getAvtUrl() != null) cloudinaryService.deleteFile(info.getPublicId());
+        // 5. set giá trị cho avt
+        info.setAvtUrl(cloudinaryResponse.url());
+        info.setPublicId(cloudinaryResponse.publicId());
+        UserInfo save = userInfoRepo.save(info);
+        return save.getAvtUrl();
+    }
+
+    public String getAvt(String id) {
+        UserInfo info = userInfoRepo.findById(id)
+            .orElseThrow(() -> new NotFoundException("user not found", "USER_NOT_FOUND"));
+        return info.getAvtUrl();
     }
 }

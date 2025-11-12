@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,17 +62,46 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-        public ResponseEntity<ApiResponse<String>> changePassword(
-            @RequestBody UserChangePasswordRequest userChangePasswordRequest,
-            @AuthenticationPrincipal Jwt jwt
-        ) {
-            String id = jwt.getSubject(); // Lấy userId từ JWT
+    public ResponseEntity<ApiResponse<String>> changePassword(
+        @RequestBody UserChangePasswordRequest userChangePasswordRequest,
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        String id = jwt.getSubject(); // Lấy userId từ JWT
 
-            ApiResponse<String> response = ApiResponse.<String>builder()
-                .success(true)
-                .message("Change password successfully")
-                .data(userService.changePassword(id, userChangePasswordRequest))
-                .build();
-            return ResponseEntity.ok(response);
-        }
+        ApiResponse<String> response = ApiResponse.<String>builder()
+            .success(true)
+            .message("Change password successfully")
+            .data(userService.changePassword(id, userChangePasswordRequest))
+            .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/avatar")
+    public ResponseEntity<ApiResponse<String>> upLoadAvt(
+        @AuthenticationPrincipal Jwt jwt,
+        @RequestPart("avatar") MultipartFile avt
+    ) throws IOException {
+        String id = jwt.getSubject(); // Lấy userId từ JWT
+
+        ApiResponse<String> response = ApiResponse.<String>builder()
+            .success(true)
+            .message("Upload avt successfully")
+            .data(userService.upLoadAvt(id, avt))
+            .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/avatar")
+    public ResponseEntity<ApiResponse<String>> getAvt(
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        String id = jwt.getSubject(); // Lấy userId từ JWT
+
+        ApiResponse<String> response = ApiResponse.<String>builder()
+            .success(true)
+            .message("Get avt successfully")
+            .data(userService.getAvt(id))
+            .build();
+        return ResponseEntity.ok(response);
+    }
 }
