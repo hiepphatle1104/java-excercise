@@ -14,6 +14,9 @@ public class UserInfo {
     @Id
     private String id; // Dùng chung ID với bảng User chính
 
+    private String avtUrl;
+    private String publicId;
+
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId // Đánh dấu rằng 'id' này cũng là Foreign Key
     @JoinColumn(name = "user_id")
