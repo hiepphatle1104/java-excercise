@@ -17,7 +17,7 @@ public class UserInfo {
     private String avtUrl;
     private String publicId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @MapsId // Đánh dấu rằng 'id' này cũng là Foreign Key
     @JoinColumn(name = "user_id")
     private User user; // Liên kết tới bảng User (chứa email/password)

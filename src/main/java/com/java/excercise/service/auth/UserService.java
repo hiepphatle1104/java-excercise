@@ -17,6 +17,7 @@ import com.java.excercise.model.entities.UserAddress;
 import com.java.excercise.model.entities.UserInfo;
 import com.java.excercise.model.entities.UserProfile;
 import com.java.excercise.model.enums.UserRole;
+import com.java.excercise.model.enums.UserStatus;
 import com.java.excercise.repository.UserInfoRepository;
 import com.java.excercise.repository.UserRepository;
 import com.java.excercise.service.CloudinaryService;
@@ -61,15 +62,19 @@ public class UserService {
 
         User user = User.map(req, roles);
         user.setPassword(passwordEncoder.encode(req.password()));
+        user.setStatus(UserStatus.APPROVED);
 
-        User save = userRepo.save(user);
-
-        // tạo user info rỗng
+        // 1. Khởi tạo UserInfo rỗng
         UserInfo userInfo = new UserInfo();
-        userInfo.setId(user.getId());
-        userInfo.setUser(user);
-        userInfoRepo.save(userInfo);
 
+        // 2. Thiết lập liên kết hai chiều
+        user.setUserInfo(userInfo); // Gán userInfo cho user
+        userInfo.setUser(user);     // Gán user cho userInfo
+        // userInfo.setId(user.getId()); // Không cần dòng này vì đã có @MapsId
+
+        // 3. Chỉ cần lưu 'user'. 'userInfo' sẽ tự động được lưu
+        //    nhờ 'cascade = CascadeType.ALL'
+        User save = userRepo.save(user);
         return SignUpResponse.map(save);
     }
 
