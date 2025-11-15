@@ -37,6 +37,8 @@ public class Order {
     @Column(nullable = false)
     private double amount;
 
+    private String note;
+
     @Enumerated(EnumType.STRING)
     private PaymentMethod method;
 

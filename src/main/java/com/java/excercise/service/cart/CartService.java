@@ -72,6 +72,12 @@ public class CartService {
         return response;
     }
 
+    public Cart getCart(User user) {
+        Optional<Cart> cart = cartRepo.findCartByUser(user);
+
+        return cart.orElseThrow(() -> new NotFoundException("Cart not found", "CART_NOT_FOUND"));
+    }
+
     public CartResponse getCartByUserId(String userId) {
         User user = userRepo.findById(userId)
             .orElseThrow(() -> new NotFoundException("User not found", "USER_NOT_FOUND"));
