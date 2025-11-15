@@ -46,9 +46,19 @@ public class PaymentController {
     }
 
     private OrderResponse toResponse(Order order) {
-        List<OrderItemResponse> items = order.getOrderItems()
-            .stream()
-            .map(oi -> new OrderItemResponse(oi.getProductId(), oi.getQuantity()))
+        List<OrderItemResponse> items = order.getOrderItems().stream()
+            .map(orderItem -> {
+                OrderItemResponse res = new OrderItemResponse();
+                res.setProductId(orderItem.getProductId());
+                res.setQuantity(orderItem.getQuantity());
+                res.setPrice(orderItem.getPrice()); // <-- Mày thiếu cái này
+
+                // Mày sẽ bị thiếu productName và productImg
+                // Mày phải inject ProductRepository/ImageService vào đây
+                // để lấy, y hệt như mày làm bên OrderService
+
+                return res;
+            })
             .toList();
 
         return new OrderResponse(

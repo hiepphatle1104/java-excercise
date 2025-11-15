@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderItemResponse {
+    private String userId;
     private String productId;
+    private String productImg;
+    private String productName;
+    private double price;
     private int quantity;
 }

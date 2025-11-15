@@ -4,16 +4,16 @@ import com.java.excercise.controller.order.OrderItemRequest;
 import com.java.excercise.controller.order.OrderItemResponse;
 import com.java.excercise.controller.order.OrderRequest;
 import com.java.excercise.controller.order.OrderResponse;
+import com.java.excercise.controller.product.ListOrderResponse;
 import com.java.excercise.exception.InvalidException;
 import com.java.excercise.exception.NotFoundException;
 import com.java.excercise.model.entities.*;
 import com.java.excercise.model.enums.OrderStatus;
-import com.java.excercise.repository.CartRepository;
-import com.java.excercise.repository.OrderRepository;
-import com.java.excercise.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import com.java.excercise.repository.*;
+import com.java.excercise.service.product.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -27,21 +27,32 @@ public class OrderService {
     private final UserRepository userRepo;
     private final OrderRepository orderRepo;
     private final CartItemRepository cartItemRepository;
+    private final ProductRepository productRepo;
+    private final ImageRepository imageRepo;
+    private final ImageService imageService;
 
     @Transactional
-    public List<Order> getAllByUser(User user) {
+    public List<ListOrderResponse> getAllByUser(User user) {
         var orders = orderRepo.findAllByUser(user);
-
-        return orders.stream().toList();
+        List<ListOrderResponse> listOrderResponse = new ArrayList<>();
+        orders.forEach(order -> {
+            String userId = order.getUser().getId();
+            ListOrderResponse response = ListOrderResponse.builder()
+                .order(order)
+                .userId(userId)
+                .build();
+            listOrderResponse.add(response);
+        });
+        return listOrderResponse;
     }
 
+    @Transactional(readOnly = true)
     public OrderResponse getOrder(String id, String userId) {
         Optional<Order> result = orderRepo.findByIdAndUserId(id, userId);
         if (result.isEmpty())
             throw new NotFoundException("Order not found", "ORDER_NOT_FOUND");
 
         Order order = result.get();
-
         OrderResponse response = new OrderResponse();
         response.setId(order.getId());
         response.setStatus(order.getStatus());
@@ -53,8 +64,21 @@ public class OrderService {
         List<OrderItemResponse> itemResponses = order.getOrderItems().stream()
             .map(item -> {
                 OrderItemResponse itemResp = new OrderItemResponse();
+                Product product = productRepo.findById(item.getProductId()).get();
+
+                // 2. Dùng 'product' đã lấy
+                itemResp.setUserId(product.getUser().getId());
                 itemResp.setProductId(item.getProductId());
+                itemResp.setProductName(product.getName());
+                List<String> images = imageService.getImagesByProduct(product);
+                if (images != null && !images.isEmpty()) {
+                    itemResp.setProductImg(images.get(0));
+                } else {
+                    itemResp.setProductImg(null); // Hoặc ảnh mặc định
+                }
+                itemResp.setPrice(product.getPrice());
                 itemResp.setQuantity(item.getQuantity());
+
                 return itemResp;
             })
             .toList();
