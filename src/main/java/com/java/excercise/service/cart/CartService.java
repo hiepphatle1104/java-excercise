@@ -72,6 +72,12 @@ public class CartService {
         return response;
     }
 
+    public Cart getCart(User user) {
+        Optional<Cart> cart = cartRepo.findCartByUser(user);
+
+        return cart.orElseThrow(() -> new NotFoundException("Cart not found", "CART_NOT_FOUND"));
+    }
+
     public CartResponse getCartByUserId(String userId) {
         User user = userRepo.findById(userId)
             .orElseThrow(() -> new NotFoundException("User not found", "USER_NOT_FOUND"));
@@ -168,4 +174,29 @@ public class CartService {
             .build();
         return cartRepo.save(newCart); // Lưu và trả về cart mới
     }
+    @Transactional // QUAN TRỌNG: Thêm @Transactional
+    public CartResponse clearCart(String id) {
+        // 1. tìm user
+        User user =  userRepo.findById(id)
+            .orElseThrow(() -> new NotFoundException("User not found", "USER_NOT_FOUND"));
+
+        // 2. tìm giỏ hàng
+        Cart cart = cartRepo.findCartByUser(user)
+            .orElseThrow(() -> new NotFoundException("Cart not found", "CART_NOT_FOUND"));
+
+        // 3. Xoá tất cả item
+        // Giả sử ông có @OneToMany(orphanRemoval = true) trong Cart.java
+        // thì .clear() sẽ tự động xoá các CartItem con
+        cart.getItems().clear();
+
+        // 4. save lại
+        Cart save = cartRepo.save(cart);
+
+        // 5. trả về cart rỗng
+        return CartResponse.builder()
+            .cartItem(Collections.emptyList()) // Trả về list rỗng
+            .total(0.0) // Trả về total 0
+            .build();
+    }
+
 }

@@ -81,4 +81,17 @@ public class CartController {
             .build();
         return ResponseEntity.ok(response);
     }
+    @DeleteMapping("/all") // Endpoint để xoá tất cả
+    public ResponseEntity<ApiResponse<CartResponse>> clearCart(
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        String id = jwt.getSubject(); // Lấy userId từ JWT
+
+        ApiResponse<CartResponse> response = ApiResponse.<CartResponse>builder()
+            .success(true)
+            .message("Cart cleared successfully")
+            .data(cartService.clearCart(id))
+            .build();
+        return ResponseEntity.ok(response);
+    }
 }

@@ -6,10 +6,12 @@ import com.java.excercise.dto.admin.UpdateStatusRequest;
 import com.java.excercise.dto.user.UserInfoDTO;
 import com.java.excercise.model.enums.UserStatus;
 import com.java.excercise.service.admin.AdminService;
+import com.java.excercise.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -67,5 +69,14 @@ public class AdminController {
                 .message("User state updated successfully")
                 .build()
         );
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<?> getAllOrdersForAdmin() {
+        // Gọi hàm mới vừa tạo trong service
+        var res = adminService.getAllOrders();
+
+        // Trả về response y hệt format của OrderController
+        return new ResponseEntity<>(ApiResponse.success("get all orders", res), HttpStatus.OK);
     }
 }

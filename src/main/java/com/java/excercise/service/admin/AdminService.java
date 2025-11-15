@@ -1,5 +1,6 @@
 package com.java.excercise.service.admin;
 
+import com.java.excercise.controller.product.ListOrderResponse;
 import com.java.excercise.dto.admin.AllUsersResponse;
 import com.java.excercise.dto.admin.UpdateStatusRequest;
 import com.java.excercise.exception.NotFoundException;
@@ -8,6 +9,7 @@ import com.java.excercise.model.entities.User;
 import com.java.excercise.model.entities.UserInfo;
 import com.java.excercise.model.enums.UserStatus;
 import com.java.excercise.repository.CartRepository;
+import com.java.excercise.repository.OrderRepository;
 import com.java.excercise.repository.ProductRepository;
 import com.java.excercise.repository.UserRepository;
 import com.java.excercise.service.product.DetailService;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class AdminService {
     private final ProductRepository productRepo;
     private final ImageService imageService;
     private final DetailService detailService;
+    private final OrderRepository orderRepo;
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @Transactional(readOnly = true)
@@ -109,5 +113,21 @@ public class AdminService {
             .orElseThrow(() -> new NotFoundException("User not found", "USER_NOT_FOUND"));
         user.setStatus(status.getStatus());
         userRepo.save(user);
+    }
+
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @Transactional(readOnly = true)
+    public List<ListOrderResponse> getAllOrders() {
+        // 1. Lấy TẤT CẢ order
+        var orders = orderRepo.findAll();
+
+        // 2. Map sang kiểu ListOrderResponse y hệt như hàm getAllByUser
+        // Dùng stream cho nó giống hàm getOrder() của ông
+        return orders.stream()
+            .map(order -> ListOrderResponse.builder()
+                .order(order)
+                .userId(order.getUser().getId()) // Lấy userId
+                .build())
+            .collect(Collectors.toList());
     }
 }
