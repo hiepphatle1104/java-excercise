@@ -16,10 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,9 +35,33 @@ public class OrderService {
         return orders.stream().toList();
     }
 
-    public Order getOrder(String id, String userId) {
-        return orderRepo.findByIdAndUserId(id, userId)
-            .orElseThrow(() -> new NotFoundException("Order not found", "ORDER_NOT_FOUND"));
+    public OrderResponse getOrder(String id, String userId) {
+        Optional<Order> result = orderRepo.findByIdAndUserId(id, userId);
+        if (result.isEmpty())
+            throw new NotFoundException("Order not found", "ORDER_NOT_FOUND");
+
+        Order order = result.get();
+
+        OrderResponse response = new OrderResponse();
+        response.setId(order.getId());
+        response.setStatus(order.getStatus());
+        response.setAmount(order.getAmount());
+        response.setMethod(order.getMethod());
+        response.setCreatedAt(order.getCreatedAt());
+        response.setUpdatedAt(order.getUpdatedAt());
+
+        List<OrderItemResponse> itemResponses = order.getOrderItems().stream()
+            .map(item -> {
+                OrderItemResponse itemResp = new OrderItemResponse();
+                itemResp.setProductId(item.getProductId());
+                itemResp.setQuantity(item.getQuantity());
+                return itemResp;
+            })
+            .toList();
+
+        response.setItems(itemResponses);
+
+        return response;
     }
 
     @Transactional

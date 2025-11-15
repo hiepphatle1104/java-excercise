@@ -5,6 +5,7 @@ import com.java.excercise.controller.order.OrderResponse;
 import com.java.excercise.exception.NotFoundException;
 import com.java.excercise.model.entities.Order;
 import com.java.excercise.model.enums.OrderStatus;
+import com.java.excercise.model.enums.PaymentMethod;
 import com.java.excercise.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -51,10 +53,11 @@ public class PaymentController {
 
         return new OrderResponse(
             order.getId(),
+            order.getStatus(),
             order.getAmount(),
             order.getMethod(),
-            order.getStatus(),
             order.getCreatedAt(),
+            order.getUpdatedAt(),
             items
         );
     }

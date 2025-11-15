@@ -36,7 +36,7 @@ public class OrderController {
         User user = userService.getUserById(id);
 
         var res = orderService.getAllByUser(user);
-        return new ResponseEntity<>(ApiResponse.success("get all event", res), HttpStatus.OK);
+        return new ResponseEntity<>(ApiResponse.success("get all orders", res), HttpStatus.OK);
     }
 
     @GetMapping("/{orderId}")
@@ -44,7 +44,7 @@ public class OrderController {
         String id = jwt.getSubject();
 
         var res = orderService.getOrder(orderId, id);
-        return new ResponseEntity<>(ApiResponse.success("get event", res), HttpStatus.OK);
+        return new ResponseEntity<>(ApiResponse.success("get order detail", res), HttpStatus.OK);
     }
 
     @PostMapping
